@@ -10,7 +10,7 @@ function [outputArray,time,outputData,shotDate]=downloaddata(shotnum,chns,datati
 % datatime,  StartTime:interval:EndTime
 % showfig: is a switch to decide whether you like to plot the data or just dowload into workspace
 % dshiift: switch to decide whether you would like to cancel the shift caused by data acqusition system
-CurrentChannel=extractMultipleStrings(chns);  %多通道名字转换
+CurrentChannel=extractMultipleStrings(chns);  % change the input string to channel names
 % dshift=0;
 dshiftTime=0.1; % The default time to do the polyfit of the rawdata is 2 seconds;
 
