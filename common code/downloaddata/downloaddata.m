@@ -10,7 +10,7 @@ function [outputArray,time,outputData,shotDate]=downloaddata(shotnum,chns,datati
 % datatime,  StartTime:interval:EndTime
 % showfig: is a switch to decide whether you like to plot the data or just dowload into workspace
 % dshiift: switch to decide whether you would like to cancel the shift caused by data acqusition system
-CurrentChannel=getChnsFromExpression(chns);  %多通道名字转换
+CurrentChannel=extractMultipleStrings(chns);  %多通道名字转换
 % dshift=0;
 dshiftTime=0.1; % The default time to do the polyfit of the rawdata is 2 seconds;
 
@@ -25,7 +25,7 @@ if nargin<4
 end
 
 strTreeName='exl50u';
-server='192.168.20.41';   %下载数据服务器
+server='192.168.20.11';   %下载数据服务器
 initServerTree(server,strTreeName,shotnum)
 outputData=[];
 % myDate=mdsvalue(['DATE_TIME(getnci("\\' strTreeName '::TOP:FBC:' CurrentChannel '","TIME_INSERTED"))'])
