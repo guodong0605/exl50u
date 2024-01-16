@@ -1,5 +1,5 @@
 function  Chnl=chnscan(shotnum)
-% This function is used to 
+% This function is used to  edited by lijia 20240116
 IpAddress='192.168.20.11';
 treeNames={'exl50u'};
 fullPath = mfilename('fullpath');
