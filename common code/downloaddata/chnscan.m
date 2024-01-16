@@ -1,6 +1,5 @@
 function  Chnl=chnscan(shotnum)
-% This function is used to  edited by lijia 20240116
-% This is a test from guodong PC
+% 该函数用于从mdsplus数据库下载所有该炮号对应的数据通道，并到数据通道的名称下载到子目录/data文件夹下
 IpAddress='192.168.20.11';
 treeNames={'exl50u'};
 fullPath = mfilename('fullpath');

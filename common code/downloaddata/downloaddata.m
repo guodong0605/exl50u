@@ -5,11 +5,12 @@ function [outputArray,time,outputData,shotDate]=downloaddata(shotnum,chns,datati
 % time： the time series of data
 % outputData: struct with  channel name and channel data;
 % shotnum: just name the shot you want to download data;
-% chns: Can be a cell ,like {'chn1','chn3-4'}， then you can download
-% chn1,chn3,chn4, or you can just download one chn like 'chn' without bracket{}
+% chns: Can be a cell ,like 'chn1,chn3-4'， then you can download chn1,chn3,chn4
 % datatime,  StartTime:interval:EndTime
 % showfig: is a switch to decide whether you like to plot the data or just dowload into workspace
 % dshiift: switch to decide whether you would like to cancel the shift caused by data acqusition system
+% example： [xx,time,chns]=downloaddata(682,'ip01-02_h','-2:7:1e-3',1,0);
+%                   [xx,time,chns]=downloaddata(682,'ip01,ip02','-2:7:1e-3',1,0);
 CurrentChannel=extractMultipleStrings(chns);  % change the input string to channel names
 % dshift=0;
 dshiftTime=0.1; % The default time to do the polyfit of the rawdata is 2 seconds;
