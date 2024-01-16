@@ -2,6 +2,7 @@ function  Chnl=chnscan(shotnum)
 % This function is used to  edited by lijia 20240116
 % This is a test from guodong PC
 % test 3
+% test4
 IpAddress='192.168.20.11';
 treeNames={'exl50u'};
 fullPath = mfilename('fullpath');
