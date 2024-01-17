@@ -4,8 +4,10 @@ acq_start=-3;        %采集开始时间，用于去除信号的偏置和漂移
 fs=1e-3;
 data_start=(t1-acq_start)/fs+1;
 data_end=(t2-acq_start)/fs;
-filepath='D:\matlab code\data\EXL50U coefficient.xlsx';
-GFcoefficent='D:\matlab code\data\coilData.mat';
+currentFile = mfilename('fullpath');
+folderpath=[currentFile,'\data\'];
+filepath=[folderpath,'EXL50U coefficient.xlsx'];
+GFcoefficent=[folderpath,'coilData.mat'];
 datatime=[num2str(acq_start),':5:',num2str(step)];
 %%
 [mptdata,~,~]=downloaddata(shotnum,'mp001-052t',datatime,0,1); %下载数据
