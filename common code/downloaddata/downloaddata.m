@@ -13,7 +13,7 @@ function [outputArray,time,outputData,shotDate]=downloaddata(shotnum,chns,datati
 %                   [xx,time,chns]=downloaddata(682,'ip01,ip02','-2:7:1e-3',1,0);
 CurrentChannel=extractMultipleStrings(chns);  % change the input string to channel names
 % dshift=0;
-dshiftTime=0.1; % The default time to do the polyfit of the rawdata is 2 seconds;
+dshiftTime=0.5; % The default time to do the polyfit of the rawdata is 2 seconds;
 
 if nargin<3
     datatime=[];
