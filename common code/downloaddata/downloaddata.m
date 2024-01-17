@@ -1,5 +1,6 @@
 function [outputArray,time,outputData,shotDate]=downloaddata(shotnum,chns,datatime,showfig,dshift)
 % Example [xx,time]=downloaddata(17103,{'div004-06','div011-16'},'0:5:1e-3',1)
+% Example [xx,time]=downloaddata(17103,'div004-06','div011-16','0:5:1e-3',1)
 % This function is used to download data from EXl50U server, you can download multiple channels in one command,
 % outputArray: the output oclf data of m*n  m is the number of data series and  n is the number of chnnels;
 % time： the time series of data
