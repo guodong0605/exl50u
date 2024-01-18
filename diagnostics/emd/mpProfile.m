@@ -38,6 +38,7 @@ flux=flux.*Flux_k';
 load(GFcoefficent)
 flux_k=coilData.flux;
 bt_k=coilData.bt;
+
 br_k=coilData.br;
 pfdata= downloaddata(shotnum,'cs_exp,ps1-10_exp',datatime,0,0);
 for i=1:size(pfdata,2)
@@ -65,7 +66,7 @@ fillall(44,52,'[0,1,0]');
 % fillall(22,32,'[0,0,1]');
 xlabel('$MPT-No$','interpreter','Latex');
 ylabel('$\rm\phi (Gs)$','interpreter','Latex');
-title('Magnetic Probe')
+title('Magnetic Probe');
 set(gca,'fontname', 'Times New Roman', 'FontWeight', 'normal', 'FontSize', 16, 'LineWidth', 2, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.02 0.02],'Xgrid','off');
 %%
 %-----------------画图------------------------------
