@@ -4,6 +4,9 @@ line= findobj(gco);
 % if class(line)~= 'matlab.graphics.chart.primitive.Line'
 %     line=line.Line;
 % end
+try
+    line=line(1);
+end
 x=line.XData;
 y=line.YData;
 if nargin<2

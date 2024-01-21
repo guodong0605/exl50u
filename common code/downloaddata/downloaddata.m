@@ -28,7 +28,12 @@ end
 
 strTreeName='exl50u';
 server='192.168.20.11';   %下载数据服务器
-initServerTree(server,strTreeName,shotnum)
+server2='192.168.20.41';   %下载数据服务器
+try
+    initServerTree(server,strTreeName,shotnum)
+catch
+    initServerTree(server2,strTreeName,shotnum)
+end
 outputData=[];
 % myDate=mdsvalue(['DATE_TIME(getnci("\\' strTreeName '::TOP:FBC:' CurrentChannel '","TIME_INSERTED"))'])
 if iscell(CurrentChannel)  %判断如果是多通道，则把输出数据按照结构体进行输出
@@ -123,6 +128,7 @@ initServerTree;
         catch
             x=0;
             y=0;
+            shotDate=nan;
         end
     end
 end
