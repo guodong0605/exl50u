@@ -16,10 +16,7 @@ if (nargin <7) || isempty(figtype), figtype = figtype_default; end
 dt=0.2;       % used to do the average of the raw data,  the average value=mean(t+dt)
 t1=Tprofile-dt/2;   %The time start to do the average
 t2=Tprofile+dt/2;  %The time end to do the
-%
-%
-%
-% average
+
 step=0.001;          % data sample time span
 acq_start=-1;        %
 fs=1e-3;

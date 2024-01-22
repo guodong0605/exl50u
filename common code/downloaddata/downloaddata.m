@@ -1,4 +1,4 @@
-function [outputArray,time,outputData,shotDate]=downloaddata(shotnum,chns,datatime,showfig,dshift)
+function [outputArray,time,outputData,unitStr,shotDate]=downloaddata(shotnum,chns,datatime,showfig,dshift)
 % Example [xx,time]=downloaddata(17103,{'div004-06','div011-16'},'0:5:1e-3',1)
 % Example [xx,time]=downloaddata(17103,'div004-06','div011-16','0:5:1e-3',1)
 % This function is used to download data from EXl50U server, you can download multiple channels in one command,
@@ -12,20 +12,16 @@ function [outputArray,time,outputData,shotDate]=downloaddata(shotnum,chns,datati
 % dshiift: switch to decide whether you would like to cancel the shift caused by data acqusition system
 % example： [xx,time,chns]=downloaddata(682,'ip01-02_h','-2:7:1e-3',1,0);
 %                   [xx,time,chns]=downloaddata(682,'ip01,ip02','-2:7:1e-3',1,0);
+datatime_default='0:5:1e-3';
+showfig_default=0;
+dshift_default=0;
+
+if (nargin <3) || isempty(datatime), datatime = datatime_default; end
+if (nargin <4) || isempty(showfig), showfig = showfig_default; end
+if (nargin <5) || isempty(dshift), dshift = dshift_default; end
+
 CurrentChannel=extractMultipleStrings(chns);  % change the input string to channel names
-% dshift=0;
-dshiftTime=0.5; % The default time to do the polyfit of the rawdata is 2 seconds;
-
-if nargin<3
-    datatime=[];
-    showfig=0;
-    dshift=0;
-end
-if nargin<4
-    showfig=0;
-    dshift=0;
-end
-
+dshiftTime=0.5; % The default time to do the polyfit of the rawdata is 0.5 seconds;
 strTreeName='exl50u';
 server='192.168.20.11';   %下载数据服务器
 server2='192.168.20.41';   %下载数据服务器
@@ -35,12 +31,16 @@ catch
     initServerTree(server2,strTreeName,shotnum)
 end
 outputData=[];
-% myDate=mdsvalue(['DATE_TIME(getnci("\\' strTreeName '::TOP:FBC:' CurrentChannel '","TIME_INSERTED"))'])
-if iscell(CurrentChannel)  %判断如果是多通道，则把输出数据按照结构体进行输出
-    for i=1:length(CurrentChannel)
-        [z,time]=mydb(CurrentChannel{i},datatime);
-        if dshift
-            fs=str2num(datatime(end-3:end));
+   %--------    根据通道的数量，利用for循环进行下载数据-------------------------
+    for i=1:length(CurrentChannel)    %下载数据的数量
+        [z,time,unitStr,shotDate]=mydb(CurrentChannel{i},datatime,strTreeName);  %调用子函数mydb进行数据下载
+        if dshift                   %是否要对数据进行0漂处理
+            pattern = '^([-+]?\d+)'; % 正则表达式模式
+            match = regexp(datatime, pattern, 'match');
+            numberStr = match{1}; % 提取匹配的字符串
+            t1 = str2double(numberStr); % 转换为数字
+            disp(['shift operation from[',num2str(t1),':',num2str(t1+dshiftTime),']'])
+            fs=str2double(datatime(end-3:end));
             shift_dy= z(1:dshiftTime/fs);
             shift_dx=time(1:length(shift_dy));
             p1fit=polyfit(shift_dx,shift_dy,1);
@@ -53,12 +53,14 @@ if iscell(CurrentChannel)  %判断如果是多通道，则把输出数据按照�
         catch
             outputArray(:,i)=z(1:end-1,1);
         end
-
         eval(temp);
         if showfig==1
             figure('Color',[1,1,1]);stackplot({{time,z,CurrentChannel{i}}},['shotnum',num2str(shotnum)]);
+            % figure('Color',[1,1,1]);stackplot({{time,z,unitStr}},['shotnum',num2str(shotnum)]);
+            legend(CurrentChannel{i});
         end
     end
+    % --------------如果showfig==2 表明要把所有通道的数据绘制到一张图上
     if showfig==2
         for k=1:length(CurrentChannel)
             if k==1
@@ -70,24 +72,9 @@ if iscell(CurrentChannel)  %判断如果是多通道，则把输出数据按照�
                 plot(time,temp,'LineWidth',2.5);
             end
         end
-
+        legend(CurrentChannel);
     end
-else
-    [outputData,time,shotDate]=mydb(CurrentChannel,datatime);
-    if dshift
-        fs=str2num(datatime(end-3:end));
-        shift_dy= z(1,dshiftTime/fs);
-        shift_dx=time(1:length(shift_dy));
-        p1fit=polyfit(shift_dx,shift_dy,1);
-        p1value=polyval(p1fit,time);
-        outputData=z-p1value;
-    end
-
-    outputArray=outputData;
-    if showfig
-        figure;stackplot({{time,outputData,CurrentChannel}},['shotnum',num2str(shotnum)]);
-    end
-end
+    %-----------------------------------------------
 initServerTree;
 
     function initServerTree(varargin)
@@ -106,7 +93,7 @@ initServerTree;
         end
     end
 
-    function [y,x,shotDate]=mydb(CurrentChannel,datatime)
+    function [y,x,unitStr,shotDate]=mydb(CurrentChannel,datatime,strTreeName)
         if ~isempty(datatime)
             timeWindow=datatime;
             pattern =':'; % '[-\d\.]+';
@@ -124,11 +111,21 @@ initServerTree;
         try
             x=mdsvalue(['dim_of(\' CurrentChannel ')']);
             y=mdsvalue(['\' CurrentChannel]);
-            shotDate=mdsvalue(['DATE_TIME(getnci("\\EXL50U::TOP:FBC:' CurrentChannel '","TIME_INSERTED"))']);
+            try
+                datechn=['ad',CurrentChannel];
+                shotDate = mdsvalue(['DATE_TIME(getnci(\' datechn ',"TIME_INSERTED"))']);    
+            catch
+                datechn='ip';
+                shotDate = mdsvalue(['DATE_TIME(getnci("\\' strTreeName '::TOP:FBC:' datechn '","TIME_INSERTED"))']);               
+            end
+             unitStr = mdsvalue(['units_of(\' CurrentChannel ')']);
         catch
             x=0;
             y=0;
             shotDate=nan;
+            unitStr=nan;
+            disp('There is no such data in Server or chnnel name wrong!')
+            return;
         end
     end
 end

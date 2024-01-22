@@ -4,9 +4,9 @@ function fig=parameter(shotnum,t1,t2,waveform,Fs)
 % t1 is the start time of data sequence
 % t2 is the end time of data sequence
 % waveform is  the Channels you want to draw,
-% parameter(4485,-1,4,{'ip',{'ne','ha001'},{'ipf1','ipf2','ipf3','ipf4','ipf5','ipf6'},'loopv','G1_IK_F'})
 % in this example,'IP' will draw in the top subplot,The next will be {'ne','ha001'} which means that Ha and ne will be plotted
 % in the same subplot,If you want to draw more contents in single subplot just put more channels in the same bracket{};
+% example: parameter(951,-2,5,{{'ipf09','ipf10'},{'ipf05','ipf06'},{'ipf07','ipf08'}},1e5)
 if nargin<5
     Fs=1e3;   % the default Sample rate
 end
@@ -39,7 +39,7 @@ for i = 1:wavenum
     %%
     switch iscell(temp_chn)
         case 0
-            [y,t]=downloaddata(shotnum,temp_chn,datatime);
+            [y,t,~,unitStr,~]=downloaddata(shotnum,temp_chn,datatime);
             if sgoalyfilt_flag
                 y= sgolayfilt(y,3,21);
             end
@@ -53,9 +53,9 @@ for i = 1:wavenum
             allaxes(i) = gca;
             ax = gca;
 
-            unit=units(find(strcmp(temp_chn,units_name)));
-            if isempty(unit)  unit={'V'}; end
-            ylabel([temp_chn,'(',unit{1},')']);
+            % unit=units(find(strcmp(temp_chn,units_name)));
+            % if isempty(unit)  unit={'V'}; end
+            ylabel(unitStr);
             set(gca, 'FontAngle',  'normal', 'FontName','Times New Roman', 'FontUnits',  'points','FontSize',  titlefontsize, 'FontWeight', 'bold');
             set(tt,'FontSize',legend_fontsize,'box',legend_box);
             if i ~= wavenum
@@ -64,7 +64,7 @@ for i = 1:wavenum
         otherwise
             nplot=length(temp_chn);
             for j=1:nplot
-                [y,t]=downloaddata(shotnum,temp_chn{j},datatime);
+                [y,t,~,unitStr,~]=downloaddata(shotnum,temp_chn{j},datatime);
                 if sgoalyfilt_flag
                     y= sgolayfilt(y,3,21);
                 end
@@ -83,11 +83,11 @@ for i = 1:wavenum
 
                 temp_ylabel=temp_chn{1};
                 unit=units(find(strcmp(temp_ylabel,units_name)));
-                if isempty(unit)  unit={'V'}; end
-                if strcmp(temp_ylabel,'mwi_ne001') ||strcmp(temp_ylabel,'mwi_ne002')
-                    temp_ylabel='ne';
-                end
-                ylabel([temp_ylabel,'(',unit{1},')'],'Interpreter','none');
+                % if isempty(unit)  unit={'V'}; end
+                % if strcmp(temp_ylabel,'mwi_ne001') ||strcmp(temp_ylabel,'mwi_ne002')
+                %     temp_ylabel='ne';
+                % end
+                ylabel(unitStr,'Interpreter','none');
                 set(gca, 'FontAngle',  'normal', 'FontName',   'Times New Roman', 'FontUnits',  'points','FontSize',  titlefontsize, 'FontWeight', 'bold');
                 try
                     set(tt,'FontSize',legend_fontsize,'box',legend_box,'Interpreter','none');
