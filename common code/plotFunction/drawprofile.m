@@ -8,6 +8,11 @@ Tprofile_default=1;
 isShift_default=0;
 figtype_default=1;
 smoothnum=100;
+fig_std=1; % STD plot
+acq_start=-1;        %
+fs=1e-5;
+
+
 if (nargin <3) || isempty(Tstart), Tstart = Tstart_default; end
 if (nargin <4) || isempty(Tend), Tend = Tend_default; end
 if (nargin <5) || isempty(Tprofile), Tprofile = Tprofile_default; end
@@ -20,8 +25,7 @@ t2=Tprofile+dt/2;  %The time end to do the
 
 downsampleRate=0.01;
 
-acq_start=-1;        %
-fs=1e-3;
+
 data_start=(t1-acq_start)/fs*downsampleRate+1;
 data_end=(t2-acq_start)/fs*downsampleRate;
 datatime=[num2str(acq_start),':5:',num2str(fs)];
@@ -98,7 +102,11 @@ templegend{1,1}='MeshFit';
 for k=1:size(chnname,1)
     templegend{k+1,1}=chnname{k};
 end
-l1=legend(templegend,'Location', 'northwest');
+if figtype~=1
+    l1=legend(templegend,'Location', 'northwest');
+else
+     l1=legend(chnname,'Location', 'northwest');
+end
 title(num2str(shotnum))
 set(l1,'fontSize',10)
 %%
@@ -112,6 +120,8 @@ if data_profile
 
     for i=1:size(data,2)
         data_mean(i)=mean(data(data_start:data_end,i));
+        temp=data(data_start:data_end,i)-data_mean(i);
+        data_std(i)=sum(temp.^2);
     end
 
     num=[];
@@ -121,11 +131,22 @@ if data_profile
     end
     figure('Color',[1 1 1],'name','dataprofile');
     axe2=plot(num,data_mean,'--o','LineWidth',2.5,'MarkerSize',8,'MarkerFaceColor',[1 0 0 ],'MarkerEdgeColor',[1 0 0 ]);
-    xlabel('Vale(s)');
-    ylabel('Channel');
+    xlabel('Channel');
+    ylabel('Value(V)');
     set(gca, 'FontName',   'Times New Roman', 'FontUnits',  'points','FontSize',  15, 'FontWeight', 'bold', 'LineWidth', 1.5, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.02 0.02],'Xgrid','on');
     legend(['profile @',num2str(t1+dt/2),'s'])
     setappdata(0,'num',num);
+    if fig_std
+        figure('Color',[1 1 1],'name','stdprofile');
+        axe2=plot(num,data_std,'--s','LineWidth',2.5,'MarkerSize',8,'MarkerFaceColor',[1 0 0 ],'MarkerEdgeColor',[1 0 0 ]);
+        xlabel('CHN');
+        ylabel('STD(au)');
+        set(gca, 'FontName',   'Times New Roman', 'FontUnits',  'points','FontSize',  15, 'FontWeight', 'bold', 'LineWidth', 1.5, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.02 0.02],'Xgrid','on');
+        legend(['profile @',num2str(t1+dt/2),'s'])
+        setappdata(0,'num',num);
+    end
+
+
 end
     function allevents(src,evt)
         p=src.Position;
@@ -135,14 +156,21 @@ end
         num=getappdata(0,'num');
         figtype=getappdata(0,'figtype');
         downsampleRate=getappdata(0,'downsampleRate');
-        dataStart=(t1-acq_start)/fs*downsampleRate+1;
-        dataEnd=(t2-acq_start)/fs*downsampleRate;
+        if figtype==1
+            dataStart=round((t1-acq_start)/fs)+1;
+            dataEnd=round((t2-acq_start)/fs);
+        else
+            dataStart=round((t1-acq_start)/fs*downsampleRate)+1;
+            dataEnd=round((t2-acq_start)/fs*downsampleRate);
+        end
 
         if figtype==1   %如果是线条
             thisline=findobj(src.Parent.Children,'type','Line');
             for i=1:length(thisline)
                 temp=thisline(i);
                 mean_y(i)=mean(temp.YData(dataStart:dataEnd));
+                temp2=temp.YData(dataStart:dataEnd)-mean_y(i);
+                mean_std(i)=sum(temp2.^2);
             end
         elseif figtype==2   %如果是contour
             thisline=findobj(src.Parent.Children,'type','Contour');
@@ -170,5 +198,21 @@ end
             set(gca, 'FontName',   'Times New Roman', 'FontUnits',  'points','FontSize',  15, 'FontWeight', 'bold', 'LineWidth', 1.5, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.02 0.02],'Xgrid','on');
             legend(['profile @',num2str(round((t1+t2)/2*1e3)),'ms',',\delta t=',num2str(round((t2-t1)*1000))])
         end
+         findfig2=findobj(0,'type','figure','name','stdprofile');
+          if ~isempty(findfig2)
+            ax=findobj(findfig2(1).Children,'type','Axes');
+            ax.Children.YData= mean_std;
+            figure(findfig2(1));
+            %     legend(['profile @',num2str(t1),'-',num2str(t2),'s'])
+            ax.Legend.String=['profile @',num2str(round((t1+t2)/2*1e3)),'ms',',\delta t=',num2str(round((t2-t1)*1000))];
+        else
+            figure('Color',[1 1 1],'name','dataprofile');
+            axe2=plot(num,mean_std,'--o','LineWidth',2.5,'MarkerSize',8,'MarkerFaceColor',[1 0 0 ],'MarkerEdgeColor',[1 0 0 ]);
+            set(gca, 'FontName',   'Times New Roman', 'FontUnits',  'points','FontSize',  15, 'FontWeight', 'bold', 'LineWidth', 1.5, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.02 0.02],'Xgrid','on');
+            legend(['profile @',num2str(round((t1+t2)/2*1e3)),'ms',',\delta t=',num2str(round((t2-t1)*1000))])
+        end
+
+
+
     end
 end

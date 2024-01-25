@@ -67,7 +67,7 @@ end
             hold on; hg{i}=plot(time,temp','linewidth',plotlinewidth,'Color',colors(j,:));
             set(gca, 'FontWeight', 'normal', 'FontSize', titlefontsize, 'LineWidth', figure_line_width, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.01 0.01],'Xgrid','on','Ygrid','on','Box','on','GridLineStyle',':')
             set(gca, 'FontAngle',  'normal', 'FontName',   'Times New Roman', 'FontUnits',  'points','FontSize',  titlefontsize, 'FontWeight', 'bold');
-            legendname{j}=[num2str(shots(j)),'/',chns{j}];
+            legendname{j}=[num2str(shots(j)),'/',chns{i}];
             if j==shotnum
                 legend(legendname,'FontSize',legend_fontsize,'box',legend_box)
                 ylabel(unitStr{i},'Interpreter','none','fontSize',ylabelfontsize)

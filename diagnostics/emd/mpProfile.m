@@ -1,14 +1,13 @@
 function mpProfile(shotnum,t1,t2)
-step=0.001;          %采样数据间隔
-acq_start=-3;        %采集开始时间，用于去除信号的偏置和漂移
+acq_start=-1;        %采集开始时间，用于去除信号的偏置和漂移
 fs=1e-3;
 data_start=(t1-acq_start)/fs+1;
 data_end=(t2-acq_start)/fs;
 currentFile = mfilename('fullpath');
-folderpath=[currentFile,'\data\'];
+folderpath=[currentFile(1:end-10),'\data\'];
 filepath=[folderpath,'EXL50U coefficient.xlsx'];
 GFcoefficent=[folderpath,'coilData.mat'];
-datatime=[num2str(acq_start),':5:',num2str(step)];
+datatime=[num2str(acq_start),':5:',num2str(fs)];
 %%
 [mptdata,~,~]=downloaddata(shotnum,'mp001-052t',datatime,0,1); %下载数据
 mpt_k=xlsread(filepath,'mpt','D2:D53');
@@ -55,8 +54,8 @@ Br2=sum(Br_compute,2);
 %%
 %-----------------画图------------------------------
 num1=1:52;
-figure;plot(num1,Bt*1000,':o','Color','k','LineWidth',1.5,'MarkerSize',6,'MarkerFace','b','MarkerEdgeColor','b');
-hold on;plot(num1,Bt2*1000,':s','Color','k','LineWidth',1.5,'MarkerSize',6,'MarkerFace','r','MarkerEdgeColor','r');
+figure;plot(num1,Bt*10000,':o','Color','k','LineWidth',1.5,'MarkerSize',6,'MarkerFace','b','MarkerEdgeColor','b');
+hold on;plot(num1,Bt2*10000,':s','Color','k','LineWidth',1.5,'MarkerSize',6,'MarkerFace','r','MarkerEdgeColor','r');
 fillall(1,16,'[1,0,0]');
 fillall(17,25,'[0,1,0]');
 fillall(26,28,'[0,0,1]');
@@ -65,14 +64,14 @@ fillall(41,43,'[0,0,1]');
 fillall(44,52,'[0,1,0]');
 % fillall(22,32,'[0,0,1]');
 xlabel('$MPT-No$','interpreter','Latex');
-ylabel('$\rm\phi (Gs)$','interpreter','Latex');
-title('Magnetic Probe');
+ylabel('BT (Gs)','interpreter','Latex');
+title([num2str(shotnum),'@',num2str(t1/2+t2/2)])
 set(gca,'fontname', 'Times New Roman', 'FontWeight', 'normal', 'FontSize', 16, 'LineWidth', 2, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.02 0.02],'Xgrid','off');
 %%
 %-----------------画图------------------------------
 num2=1:48;
-figure;plot(num2,Br*1000,':o','Color','k','LineWidth',1.5,'MarkerSize',6,'MarkerFace','b','MarkerEdgeColor','b');
-hold on;plot(num2,Br2*1000,':s','Color','k','LineWidth',1.5,'MarkerSize',6,'MarkerFace','r','MarkerEdgeColor','r');
+figure;plot(num2,Br*10000,':o','Color','k','LineWidth',1.5,'MarkerSize',6,'MarkerFace','b','MarkerEdgeColor','b');
+hold on;plot(num2,Br2*10000,':s','Color','k','LineWidth',1.5,'MarkerSize',6,'MarkerFace','r','MarkerEdgeColor','r');
 fillall(1,12,'[1,0,0]');
 fillall(13,21,'[0,1,0]');
 fillall(22,24,'[0,0,1]');
@@ -81,10 +80,10 @@ fillall(37,39,'[0,0,1]');
 fillall(40,48,'[0,1,0]');
 % fillall(22,32,'[0,0,1]');
 xlabel('$MPN-No$','interpreter','Latex');
-ylabel('$\rm\phi (Gs)$','interpreter','Latex');
-title('Magnetic Probe')
+ylabel('Bn (Gs)','interpreter','Latex');
+title([num2str(shotnum),'@',num2str(t1/2+t2/2)])
 set(gca,'fontname', 'Times New Roman', 'FontWeight', 'normal', 'FontSize', 16, 'LineWidth', 2, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.02 0.02],'Xgrid','off');
-
+title([num2str(shotnum),'@',num2str(t1/2+t2/2)])
 %%
 %-----------------画图------------------------------
 num3=1:47;
@@ -96,8 +95,8 @@ fillall(29,38,'[0,1,1]');
 fillall(39,47,'[0,1,0]');
 % fillall(22,32,'[0,0,1]');
 xlabel('$FLUX-No$','interpreter','Latex');
-ylabel('$\rm\phi (Wb)$','interpreter','Latex');
+ylabel('$\rm\phi (mWb)$','interpreter','Latex');
 title('Flux Loop')
 set(gca,'fontname', 'Times New Roman', 'FontWeight', 'normal', 'FontSize', 16, 'LineWidth', 2, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.02 0.02],'Xgrid','off');
-
+title([num2str(shotnum),'@',num2str(t1/2+t2/2)])
 %%
