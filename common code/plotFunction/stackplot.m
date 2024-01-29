@@ -115,7 +115,7 @@ for i = 1:wavenum
     else
         ylab = ['Signal'];
     end
-    set(gca,'FontName','Times New Roman')
+    set(gca,'Fontname','Helvetica')
     ax = gca;
 %     h= get(ax, 'ylabel');
 %     set(h, 'FontAngle',  'normal', ...
@@ -139,7 +139,7 @@ end
 
 ax = gca;
 h = get(ax, 'xlabel');
-set(h, 'FontAngle',  'normal',  'FontName',   'Times New Roman', 'FontUnits',  'points', 'FontSize',  17, 'FontWeight', 'bold',  'string', Xlabel,'Interpreter','none');
+set(h, 'FontAngle',  'normal',  'Fontname','Helvetica', 'FontUnits',  'points', 'FontSize',  17, 'FontWeight', 'bold',  'string', Xlabel,'Interpreter','none');
  
 % link all x axes
 nn = 1;

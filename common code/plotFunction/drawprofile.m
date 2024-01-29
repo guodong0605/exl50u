@@ -10,7 +10,7 @@ figtype_default=1;
 smoothnum=100;
 fig_std=1; % STD plot
 acq_start=-1;        %
-fs=1e-5;
+fs=1e-2;
 
 
 if (nargin <3) || isempty(Tstart), Tstart = Tstart_default; end
@@ -53,7 +53,10 @@ elseif figtype==2
     end
     sortedNumbers = sort(numbers);  % 排序
     %对时间序列进行降采样，方便查看
-    data2 = zeros(size(data,1)*downsampleRate, size(data,2));
+    data2 = zeros(round(size(data,1)*downsampleRate), size(data,2));
+    if mod(size(data,1),10)==1
+        data2(end+1,:)=0;
+    end
     for i = 1:size(data,2)
         data2(:, i) = downsample(smooth(data(:, i),smoothnum), 1/downsampleRate);
     end
@@ -211,8 +214,5 @@ end
             set(gca, 'FontName',   'Times New Roman', 'FontUnits',  'points','FontSize',  15, 'FontWeight', 'bold', 'LineWidth', 1.5, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.02 0.02],'Xgrid','on');
             legend(['profile @',num2str(round((t1+t2)/2*1e3)),'ms',',\delta t=',num2str(round((t2-t1)*1000))])
         end
-
-
-
     end
 end

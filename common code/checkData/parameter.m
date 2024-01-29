@@ -56,7 +56,7 @@ for i = 1:wavenum
             % unit=units(find(strcmp(temp_chn,units_name)));
             % if isempty(unit)  unit={'V'}; end
             ylabel(unitStr);
-            set(gca, 'FontAngle',  'normal', 'FontName','Times New Roman', 'FontUnits',  'points','FontSize',  titlefontsize, 'FontWeight', 'bold');
+            set(gca, 'FontAngle',  'normal', 'FontName','Helvetica', 'FontUnits',  'points','FontSize',  titlefontsize, 'FontWeight', 'bold');
             set(tt,'FontSize',legend_fontsize,'box',legend_box);
             if i ~= wavenum
                 set(gca, 'XTickLabel',[])
@@ -88,7 +88,7 @@ for i = 1:wavenum
                 %     temp_ylabel='ne';
                 % end
                 ylabel(unitStr,'Interpreter','none');
-                set(gca, 'FontAngle',  'normal', 'FontName',   'Times New Roman', 'FontUnits',  'points','FontSize',  titlefontsize, 'FontWeight', 'bold');
+                set(gca, 'FontAngle',  'normal', 'FontName',   'Helvetica', 'FontUnits',  'points','FontSize',  titlefontsize, 'FontWeight', 'bold');
                 try
                     set(tt,'FontSize',legend_fontsize,'box',legend_box,'Interpreter','none');
                 end

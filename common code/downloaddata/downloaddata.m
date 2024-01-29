@@ -20,7 +20,12 @@ if (nargin <3) || isempty(datatime), datatime = datatime_default; end
 if (nargin <4) || isempty(showfig), showfig = showfig_default; end
 if (nargin <5) || isempty(dshift), dshift = dshift_default; end
 
-CurrentChannel=extractMultipleStrings(chns);  % change the input string to channel names
+
+try
+    CurrentChannel=extractMultipleStrings(chns);  % change the input string to channel names
+catch
+    CurrentChannel=chns;
+end
 dshiftTime=0.5; % The default time to do the polyfit of the rawdata is 0.5 seconds;
 strTreeName='exl50u';
 server='192.168.20.11';   %下载数据服务器
