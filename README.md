@@ -44,7 +44,7 @@
 
 #### 功能描述
 
-`changedata.m`是一个MATLAB函数，用于选中MATLAB figure中的曲线并对其数据进行运算操作。
+`changedata.m`用于选中MATLAB figure中的曲线并对其数据进行运算操作。
 
 #### 使用方法
 
@@ -75,13 +75,29 @@
 
 ### comparedata.m 使用说明
 
+#### 功能描述
+`comparedata.m` 用于把不同炮号，不同通道的数据进行组织绘图
+其主要做法是首先调用parameter函数绘制一个shot下输入通道的数据，然后第二次调用parameter时把里面的曲线复制到第一个figure中
+
 #### 使用方法
 
-- 基础语法： 
-- comparedata(t1,t2,chn,shots) t1开始时间，t2结束时间，chns绘图通道，引号分开，几个引号表示有几个subplot,一组引号内有两个通道，表示一个subplot内绘制两条曲线
+- 基础语法： comparedata(t1,t2,chn,shots)  t1开始时间，t2结束时间，chns绘图通道，引号分开，几个引号表示有几个subplot,一组引号内有两个通道，表示一个subplot内绘制两条曲线
 - `comparedata(-1,8,{'i_cs','loopv','ip'},{1201,1204,1205})`  三个subplot
-- `comparedata(-1,8,{'i_cs,loopv','ip'},{1201,1204,1205})` 两个subplot
+- `comparedata(-1,8,{'i_cs,loopv','ip'},{1201,1204,1205})` 两个subplo
 
 ### parameter.m 使用说明
 
+####  功能描述
+该函数用于快速绘制指定炮号条件下，对应通道的数据
+`fig=parameter(shotnum,t1,t2,waveform,Fs)`
+其中shotnum表示炮号；t1和t2分别表示开始和结束时间
+waveform 是一个cell结构，用于存储要绘图的通道信息，用`{}`表示
+Fs表示下载数据对应的采样率，如果不输入，默认时1e3.
+####  使用方法
+`parameter(951,-2,5,{{'ipf09','ipf10'},{'ipf05','ipf06'},{'ipf07','ipf08'}},1e5)`
+用于绘制951炮，-2s至5s的数据，figure中一共3个subplot, 第一个subplot有两条曲线，ipf09和ipf10
+
 ### manyshots.m 使用说明
+####  功能描述
+功能和comparedata类似，用于组织不同炮号，不同通道的数，并进行绘图，不过函数没有调用parameter，而是通过for循环进行数据下载并组织数据。
+####  使用方法
