@@ -227,7 +227,7 @@ function degree_Callback(hObject, eventdata, handles)
 %        contents{get(hObject,'Value')} returns selected item from degree
 global plotParam
 temp=get(hObject,'Value');
-plotParam.degree=temp*30-30;
+plotParam.degree=temp*30;
 
 % --- Executes during object creation, after setting all properties.
 function degree_CreateFcn(hObject, eventdata, handles)

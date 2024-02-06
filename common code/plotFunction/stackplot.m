@@ -14,7 +14,7 @@ function handleOut = stackplot(Waveform,iTitle, Xlabel)
 %
 % Example:
 %
-%  stackplot({{t1, data1,'Volt (V)'},{t2, data2, 'Is (A)'}}, [], [], [], 'I-V plot', 'Time (ms)');
+%  stackplot({{t1, data1,'Volt (V)'},{t2, data2, 'Is (A)'}}, 'I-V plot', 'Time (ms)');
 %
 % See also:
 % PLOT, SUBPLOT, AXES, XLIM, YLIM, SUBLABEL              

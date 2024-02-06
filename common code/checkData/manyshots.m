@@ -1,26 +1,11 @@
 function manyshots(shotnums, chn,Tstart,Tend)
 
 % This function downloads and plots multiple shots of data for multiple channels.
-%
-% Inputs:
-%   - Tstart: Start time of the data (default: -1)
-%   - Tend: End time of the data (default: 5)
-%   - Fs: Sampling frequency of the data (default: 1e-3)
-%   - isShift: Flag indicating whether to shift the data (default: 0)
-%   - chn: Cell array of channel names
-%   - shotnums: Array of shot numbers
-%
-% Outputs:
-%   - None
-%
+%   It takes an optional input argument 'isShift' which is a flag indicating whether to shift the data.
+%   By default, the value of 'isShift' is 0, meaning the data will not be shifted.
+%   If 'isShift' is set to 1, the data will be shifted.
 % Example usage:
-%   Tstart = -1;
-%   Tend = 5;
-%   Fs = 1e-3;
-%   isShift = 0;
-%   chn = {'channel1', 'channel2'};
-%   shotnums = [1, 2, 3];
-%   manyshots(Tstart, Tend, Fs, isShift, chn, shotnums);
+%   manyshots([1,2,3], {'Ipl','Vloop'},-1,5,1e-3,1)
 %
 % Author: GitHub Copilot
 Tstart_default=-1;

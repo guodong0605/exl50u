@@ -12,12 +12,10 @@ function fillall(varargin)
 %
 %   See also patch, fill, fill3, area
 
-%   Copyright 1958-2008 Lan Tao @USTC
-%   $Revision: 1.0 $ $Date: 2008/09/02 23:36:23$
 
 error(nargchk(2,4,nargin));   % check input arguments
 
-selectcolor = 'Y';
+selectcolor = 'r';
 if isscalar(varargin{1})
 %    if ishandle(varargin{1})
     if 0

@@ -14,7 +14,7 @@ p_db = 10*log10(abs(p)); % 计算分贝值
 figure('Color',[1,1,1]);pcolor(t, f/1000, p_db ); shading interp;
 cb = colorbar;
 ylabel(cb, '功率(dB)');
-clim([max(p_db(:))-30, max(p_db(:))-10]);
+% clim([max(p_db(:))-30, max(p_db(:))-10]);
 axis xy; axis tight; colormap(jet); 
 xlabel('Time (s)');
 ylabel('Frequency (kHz)');
