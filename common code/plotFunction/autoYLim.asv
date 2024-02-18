@@ -1,0 +1,26 @@
+function autoYLim(figureHandle)
+    axesHandles = findobj(figureHandle, 'Type', 'axes');
+    for i = 1:length(axesHandles)
+        currentAxes = axesHandles(i);
+        yTicks = get(currentAxes, 'YTick');
+        if length(yTicks) < 2
+            continue;
+        end
+        yLabelInterval = yTicks(2) - yTicks(1);
+        
+        allLines = findobj(currentAxes, 'Type', 'line');
+        ymin = inf;
+        ymax = -inf;
+        for j = 1:length(allLines)
+            yData = get(allLines(j), 'YData');
+            ymin = min(ymin, min(yData));
+            ymax = max(ymax, max(yData));
+        end
+        
+        % 调整ymax和ymin到最近的yLabelInterval倍数
+        newUpperLim = ceil(ymax / yLabelInterval) * yLabelInterval-0.1*yLabelInterval;
+        newLowerLim = floor(ymin / yLabelInterval) * yLabelInterval;
+
+        set(currentAxes, 'YLim', [newLowerLim, newUpperLim]);
+    end
+end
