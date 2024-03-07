@@ -43,9 +43,6 @@ for i = 1:wavenum
             if sgoalyfilt_flag
                 y= sgolayfilt(y,3,21);
             end
-            %                if ~isempty(opts)
-            %                     y=y-mean(y(1:10));
-            %                end
 
             hg{i} = plot(t,y,'linewidth',plotlinewidth,'Color',colors(1,:));
             tt=legend(temp_chn);

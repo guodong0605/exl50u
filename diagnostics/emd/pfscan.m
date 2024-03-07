@@ -9,6 +9,7 @@ datatime=[num2str(t1),':',num2str(t2),':',num2str(interval)];
 PFcurrent=zeros(shotnum2-shotnum1+1,12);
 k=1;
 for i=shotnum1:shotnum2
+    try
     display(['shotnum=',num2str(i)])
     [pfdata,~]= downloaddata(i,'cs_exp,ps1-10_exp,i_tf',datatime,0,0);
     for j=1:12

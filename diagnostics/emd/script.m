@@ -5,8 +5,25 @@ downloaddata(1706,'mp001-9n','-3:5:1e-2',2,0);
 downloaddata(1704,'mp001-9n','-3:5:1e-2',2,0);
 downloaddata(1706,'ps1-10_exp','-3:5:1e-2',2,0);
 downloaddata(1704,'mp010-20t','-3:5:1e-2',2,0);
-
-
+%%
+for shotnum=1781:1804
+    downloaddata(shotnum,'ps1-10_exp','-3:5:1e-2',2,0);
+    fig=gcf;
+    filename=num2str(shotnum);
+    print(fig, fullfile('E:\01 磁测量诊断\实验记录\', filename), '-djpeg');
+    close all
+end
+%%
+% 创建包含6个子cell的chnData，每个子cell都有其X和Y数据
+chnData = {
+    {linspace(0, 2*pi, 100), sin(linspace(0, 2*pi, 100))}, % 第1个子cell
+    {linspace(0, 2*pi, 100), cos(linspace(0, 2*pi, 100))}, % 第2个子cell
+    {linspace(0, 2*pi, 100), sin(linspace(0, 2*pi, 100)).^2}, % 第3个子cell
+    {linspace(0, 2*pi, 100), cos(linspace(0, 2*pi, 100)).^2}, % 第4个子cell
+    {linspace(0, 2*pi, 100), tan(linspace(0, 2*pi, 100))}, % 第5个子cell
+    {linspace(0, 2*pi, 100), -tan(linspace(0, 2*pi, 100))} % 第6个子cell
+};
+colomnPlot(chnData,2);
 
 
 

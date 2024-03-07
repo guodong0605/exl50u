@@ -70,7 +70,7 @@ outputData=[];
         for k=1:length(CurrentChannel)
             if k==1
                 eval(['temp=outputData.',CurrentChannel{k},';'])
-                figure;stackplot({{time,temp,CurrentChannel{i}}},['shotnum',num2str(shotnum)]);
+                figure('Color',[1 1 1]);stackplot({{time,temp,CurrentChannel{i}}},['shotnum',num2str(shotnum)]);
             else
                 eval(['temp=outputData.',CurrentChannel{k},';'])
                 hold on;
