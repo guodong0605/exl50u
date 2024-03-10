@@ -16,12 +16,10 @@ end
 %%
 % 创建包含6个子cell的chnData，每个子cell都有其X和Y数据
 chnData = {
-    {linspace(0, 2*pi, 100), sin(linspace(0, 2*pi, 100))}, % 第1个子cell
-    {linspace(0, 2*pi, 100), cos(linspace(0, 2*pi, 100))}, % 第2个子cell
-    {linspace(0, 2*pi, 100), sin(linspace(0, 2*pi, 100)).^2}, % 第3个子cell
-    {linspace(0, 2*pi, 100), cos(linspace(0, 2*pi, 100)).^2}, % 第4个子cell
-    {linspace(0, 2*pi, 100), tan(linspace(0, 2*pi, 100))}, % 第5个子cell
-    {linspace(0, 2*pi, 100), -tan(linspace(0, 2*pi, 100))} % 第6个子cell
+    { [0:0.1:10; sin(0:0.1:10); cos(0:0.1:10)]', [0:0.1:10; 2.*sin(0:0.1:10)]' },
+    { [0:0.1:10; sin(0:0.1:10).^2; cos(0:0.1:10).^2]', [0:0.1:10; 2.*cos(0:0.1:10)]' },
+    { [0:0.1:10; sin(0:0.1:10); cos(0:0.1:10); sin(0:0.1:10).*cos(0:0.1:10)]', [0:0.1:10; 2.*tan(0:0.1:10)]' },
+    { [0:0.1:10; sin(0:0.1:10).^2; cos(0:0.1:10).^2]', [0:0.1:10; 2.*tan(0:0.1:10)]' }
 };
 colomnPlot(chnData,2);
 

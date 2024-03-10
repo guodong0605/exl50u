@@ -4,5 +4,4 @@ currentFilePath = mfilename('fullpath');
 colorpath = fullfile(pathOfMFile, 'mycolors.mat');
 load(colorpath)
 colorsOutput=colors(1:n,:);
-
 end
