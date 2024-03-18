@@ -5,11 +5,11 @@ function drawprofile(shotnum,chnnames,Tstart,Tend,Tprofile,isShift,figtype)
 Tstart_default=-1;
 Tend_default=5;
 Tprofile_default=1;
-isShift_default=0;
+isShift_default=1;
 figtype_default=1;
 smoothnum=100;
 fig_std=1; % STD plot
-acq_start=-1;        %
+acq_start=-3;        %
 fs=1e-2;
 
 
@@ -26,8 +26,8 @@ t2=Tprofile+dt/2;  %The time end to do the
 downsampleRate=0.01;
 
 
-data_start=(t1-acq_start)/fs*downsampleRate+1;
-data_end=(t2-acq_start)/fs*downsampleRate;
+data_start=round((t1-acq_start)/fs*downsampleRate+1);
+data_end=round((t2-acq_start)/fs*downsampleRate);
 datatime=[num2str(acq_start),':5:',num2str(fs)];
 [data,time,chns]=downloaddata(shotnum,chnnames,datatime,0,isShift_default); %下载数据
 data_profile=1;

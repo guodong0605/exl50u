@@ -15,11 +15,16 @@ function [outputArray,time,outputData,unitStr,shotDate]=downloaddata(shotnum,chn
 datatime_default='0:5:1e-3';
 showfig_default=0;
 dshift_default=0;
-
+currentFilePath = mfilename('fullpath');
+[currentDir,~,~] = fileparts(currentFilePath);
+[parentDir,~,~] = fileparts(currentDir);
+filepath = fullfile(parentDir,"plotFunction/mycolors.mat");
+temp=load(filepath);
+colors=temp.colors;
 if (nargin <3) || isempty(datatime), datatime = datatime_default; end
 if (nargin <4) || isempty(showfig), showfig = showfig_default; end
 if (nargin <5) || isempty(dshift), dshift = dshift_default; end
-
+% 获取当前运行的.m文件的完整路径
 
 try
     CurrentChannel=extractMultipleStrings(chns);  % change the input string to channel names
@@ -74,7 +79,7 @@ outputData=[];
             else
                 eval(['temp=outputData.',CurrentChannel{k},';'])
                 hold on;
-                plot(time,temp,'LineWidth',2.5);
+                plot(time,temp,'LineWidth',2.5,'Color',colors(k,:));
             end
         end
         legend(CurrentChannel);

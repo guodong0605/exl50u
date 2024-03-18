@@ -91,7 +91,7 @@ for i = 1:wavenum
 
             for j=1:nplot
                 if style
-                    hg{i} = plot(temp{1},temp{j+1},':o','Color','k', 'Tag', stackplottag,'linewidth',2,'MarkerSize',8,'MarkerFace',colors(i,:),'MarkerEdgeColor',colors(i,:));
+                    hold on;hg{i} = plot(temp{1},temp{j+1},':o','Color','k', 'Tag', stackplottag,'linewidth',2,'MarkerSize',8,'MarkerFace',colors(j,:),'MarkerEdgeColor',colors(j,:));
                 else
                     hold on; hg{i}=plot(temp{1},temp{j+1}, 'Tag', stackplottag,'linewidth',2,'color',colors(j,:));
                 end

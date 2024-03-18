@@ -1,10 +1,10 @@
-function [error,TotalFlux]=FluxError(shotnum,fluxCoilName,fluxparam,flatTime)
+function [error,TotalFlux]=FluxError(shotnum,fluxCoilName,param,flatTime)
 coilNamesStr='pf1-10';
 coilNames=extractMultipleStrings(coilNamesStr);  %参与优化的源有哪些磁场；
 fluxparam.fluxCoilName=fluxCoilName;
-fluxparam.X=fluxparam(1);
-fluxparam.Z=fluxparam(2);
-fluxparam.K=fluxparam(3);
+fluxparam.X=param(1);
+fluxparam.Z=param(2);
+fluxparam.K=param(3);
 
 dt=0.1;
 fs=1e-2;
