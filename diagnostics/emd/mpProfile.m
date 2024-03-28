@@ -28,9 +28,9 @@ Br=mpn.*mpn_k';
 
 %%
 [fluxdata,~,~]=downloaddata(shotnum,'flux001-047',datatime,0,data_shift); %下载数据
-temp=fluxdata(:,24);
-fluxdata(:,24)=fluxdata(:,23);
-fluxdata(:,23)=temp;
+% temp=fluxdata(:,24);
+% fluxdata(:,24)=fluxdata(:,23);
+% fluxdata(:,23)=temp;
 Flux_k=xlsread(filepath,'flux','C2:C48');
 for i=1:size(fluxdata,2)
     flux(i)=mean(fluxdata(data_start:data_end,i));
@@ -115,7 +115,6 @@ legend('Experiment','Compute')
 set(gca,'fontname', 'Times New Roman', 'FontWeight', 'normal', 'FontSize', 22, 'LineWidth', 2, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.02 0.02],'Xgrid','off');
 
 %%
-
 bt_err=abs(Bt*1e4-Bt2)./Bt2*100;
 bn_err=abs(Br*1e4-Br2)./Br2*100;
 flux_err=abs(flux-flux2)./flux2*100;

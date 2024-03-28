@@ -3,8 +3,8 @@ if nargin<2
     fig=1;
 end
 % PF coil parameter
-probe_xgrid=49;
-probe_ygrid=49;
+probe_xgrid=9;
+probe_ygrid=9;
 currentFile = mfilename('fullpath');
 folderpath=[currentFile(1:end-10),'data\'];
 filepath=[folderpath,'EXL50UProbeFluxLoop.xlsx'];
@@ -84,7 +84,7 @@ end
         FilamentCurrent = reshape(AmperTurn, 1, numElements);
 
     end
-    function [X,Y]=getProbePoint(probeParam, Nx, Ny)
+    function [XX,YY]=getProbePoint(probeParam, Nx, Ny)
         % 根据中心点、宽度、高度、倾斜角度、以及Nx和Ny生成探测点坐标
         % 输入:
         % XCenter, YCenter - 线圈中心点坐标
@@ -139,8 +139,8 @@ end
         Y = YCenter + dY_rotated;
 
         % 将结果重新组织为行向量
-        X = reshape(X, [1, numel(X)]);
-        Y = reshape(Y, [1, numel(Y)]);
+        XX= reshape(X, [1, numel(X)]);
+        YY = reshape(Y, [1, numel(Y)]);
     end
 
 end

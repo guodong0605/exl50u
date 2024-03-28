@@ -22,7 +22,7 @@ function varargout = ofit_V1(varargin)
 
 % Edit the above text to modify the response to help ofit_V1
 
-% Last Modified by GUIDE v2.5 21-Mar-2024 16:00:32
+% Last Modified by GUIDE v2.5 13-Mar-2024 10:12:18
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -195,13 +195,12 @@ function download_Callback(hObject, eventdata, handles)
     mystep=1;
     undistort_flag=0;
     camera=handles.pushbutton8.String(handles.pushbutton8.Value);
-    camera=camera{1};
     shotnum=str2double(handles.shot_edit.String);
     time=str2double(handles.time_edit.String);
     try
         handles.Info_text.String='数据下载中!';
         handles.Info_text.FontSize=20;
-        [info,picture]=downloadcine(shotnum,time,time,1,camera,0);
+        [info,picture]=downloadcine(shotnum,time,time,1,camera);
         global img1;
         img1=reshape(picture,info.Height,info.Width); 
         img1=img1/max(max(img1));
@@ -1998,10 +1997,3 @@ function axes1_CreateFcn(hObject, eventdata, handles)
 % handles    empty - handles not created until after all CreateFcns called
 
 % Hint: place code in OpeningFcn to populate axes1
-
-
-% --------------------------------------------------------------------
-function panel_ofit_ButtonDownFcn(hObject, eventdata, handles)
-% hObject    handle to panel_ofit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)

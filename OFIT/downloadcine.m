@@ -9,51 +9,52 @@ function [info,picture,t]=downloadcine(shotnum,t1,t2,dframe,camera,isframe)
 
 % CAUTION   there are two cameras around EXL50
 dt=0;
-switch nargin
-    case 1
-        t1=0;t2=Inf;dframe=1; camera='M120';isframe=1;
-    case 2
-        t2=Inf; dframe=1;camera='M120';isframe=1;
-    case 3
-        dframe=1;camera='M120';isframe=1;
-    case 4
-        camera='M120';isframe=1;
-    case 5
-        if camera==1
-            camera='M120';
-        else
-            camera='D240';
-        end
-        isframe=0;
-end
+if nargin<2;  t1=0;                    end
+if nargin<3;  t2=inf;                  end
+if nargin<4;  dframe=1;            end
+if nargin<5;  camera='M150';   end
+if nargin<6;  isframe=0         ;   end
 %-------cine format------------------
 %%
-if ischar(shotnum)
-    cinefilename=shotnum;
+if shotnum<1e4
+    shotName=['0',num2str(shotnum)];
 else
-    shotnum_name=[camera,'-',num2str(shotnum),'.cine'];
-    switch camera
-        case 'M120'
-            if shotnum>=15213
-                cameraPath=['\\192.168.20.29\exl50-camera\',camera];
-            else
-                cameraPath=['\\192.168.20.25\exl50-camera\',camera];
-            end
-        case 'D240'
-            if shotnum>=15130
-                cameraPath=['\\192.168.20.29\exl50-camera\',camera];
-            else
-                cameraPath=['\\192.168.20.25\exl50-camera\',camera];
-            end
+    shotName=num2str(shotnum);
+end
+switch camera
+    case 'M120'
+        if shotnum>=15213
+            cameraPath=['\\192.168.20.29\exl50-camera\',camera];
+        else
+            cameraPath=['\\192.168.20.25\exl50-camera\',camera];
+        end
+    case 'D240'
+        if shotnum>=15130
+            cameraPath=['\\192.168.20.29\exl50-camera\',camera];
+        else
+            cameraPath=['\\192.168.20.25\exl50-camera\',camera];
+        end
+    case 'M150'
+        cameraPath='\\192.168.20.29\EXL50-Camera\M150';
+    case '60'
+        cameraPath='\\192.168.20.29\EXL50-Camera\M60';
+end
+
+fileList = searchFiles(cameraPath, '.cine');
+cinefilename=[];
+for i = 1:length(fileList)
+    temp=fileList{i};
+    [~,filename]= fileparts(temp);
+    cinenumber=str2double(filename(6:end));
+    if shotnum==cinenumber
+        cinefilename=temp;
+        break;
     end
-    cd(cameraPath);
-    temp=dir('**/*.cine');
-    index = find(strcmp({temp.name}, shotnum_name)==1);
-    cinefilename=[temp(index,:).folder,'\',camera,'-',num2str(shotnum),'.cine'];
-    if isempty(index)
-        msg=['There is No such a shotnum in database：',num2str(shotnum)];
-        error(msg)
-    end
+end
+
+if isempty(cinefilename)
+    msg=['There is No such a shotnum in database：',num2str(shotnum)];
+    error(msg)
 end
 
 fid=fopen(cinefilename,'r');
@@ -158,7 +159,7 @@ if frm_max>info.TotalImage
     frm_max=info.EndImage;
 end
 for frame=frm_min:dframe:frm_max
-    
+
     fseek(fid,pimage(frame),'bof');
     aux=fread(fid,1,'ulong');
     fseek(fid,pimage(frame)+aux,'bof');
