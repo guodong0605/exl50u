@@ -1,12 +1,15 @@
-function [fluxPF,DX,DY]=PfCoilFlux(coilname)
+function [fluxPF,Bt,Br]=PfCoilFlux(coilname,fig)
+if nargin<2
+    fig=1;
+end
 % PF coil parameter
-probe_xgrid=10;
-probe_ygrid=10;
+probe_xgrid=9;
+probe_ygrid=9;
 currentFile = mfilename('fullpath');
-folderpath=[currentFile(1:end-10),'\data\'];
+folderpath=[currentFile(1:end-10),'data\'];
 filepath=[folderpath,'EXL50UProbeFluxLoop.xlsx'];
 CoilParameter=readtable(filepath,'Sheet','coils','VariableNamingRule','preserve');
-FluxParameter=readtable(filepath,'Sheet','flux','VariableNamingRule','preserve');
+FluxParameter=readtable(filepath,'Sheet','flux','VariableNamingRule','preserve',Range='A1:D48');
 MBTParameter=readtable(filepath,'Sheet','probeBt','VariableNamingRule','preserve',Range='A1:I53');
 MBrParameter=readtable(filepath,'Sheet','probeBr','VariableNamingRule','preserve');
 
@@ -36,13 +39,11 @@ B_X=sum(BX2,1)/(probe_xgrid*probe_ygrid)*1e4;
 B_Y=sum(BY2,1)/(probe_xgrid*probe_ygrid)*1e4;
 theta_br=table2array(MBrParameter(:,4))/180*pi;
 Br=B_Y.*cos(theta_br')-B_X.*sin(theta_br'); % PF contribution
-
-
-
-figure;stackplot({{1:numel(fluxPF),fluxPF,'Wb'}},coilname,'Flux',1)
-figure;stackplot({{1:numel(Bt),Bt,'B_theta(Gauss)'}},coilname,'poloidal B field',1)
-figure;stackplot({{1:numel(Br),Br,'Br(Gauss)'}},coilname,'radial B field',1)
-
+if fig
+    figure;stackplot({{1:numel(fluxPF),fluxPF*1e3,'mWb'}},coilname,'Flux',1)
+    figure;stackplot({{1:numel(Bt),Bt*1e4,'B_theta(mGauss)'}},coilname,'poloidal B field',1)
+    figure;stackplot({{1:numel(Br),Br*1e4,'Br(mGauss)'}},coilname,'radial B field',1)
+end
 
     function [X2,Y2,FilamentCurrent,GapX]=sourcePrepare(coilParam,CoilName)
         rowNames=coilParam(:,1);
@@ -83,7 +84,7 @@ figure;stackplot({{1:numel(Br),Br,'Br(Gauss)'}},coilname,'radial B field',1)
         FilamentCurrent = reshape(AmperTurn, 1, numElements);
 
     end
-    function [X,Y]=getProbePoint(probeParam, Nx, Ny)
+    function [XX,YY]=getProbePoint(probeParam, Nx, Ny)
         % 根据中心点、宽度、高度、倾斜角度、以及Nx和Ny生成探测点坐标
         % 输入:
         % XCenter, YCenter - 线圈中心点坐标
@@ -138,8 +139,8 @@ figure;stackplot({{1:numel(Br),Br,'Br(Gauss)'}},coilname,'radial B field',1)
         Y = YCenter + dY_rotated;
 
         % 将结果重新组织为行向量
-        X = reshape(X, [1, numel(X)]);
-        Y = reshape(Y, [1, numel(Y)]);
+        XX= reshape(X, [1, numel(X)]);
+        YY = reshape(Y, [1, numel(Y)]);
     end
 
 end

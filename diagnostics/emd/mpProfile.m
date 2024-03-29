@@ -1,4 +1,4 @@
-function relativeError=mpProfile(shotnum,t1,t2)
+function RelativeError=mpProfile(shotnum,t1,t2)
 acq_start=-3;        %采集开始时间，用于去除信号的偏置和漂移
 fs=1e-3;
 data_shift=1;
@@ -28,11 +28,16 @@ Br=mpn.*mpn_k';
 
 %%
 [fluxdata,~,~]=downloaddata(shotnum,'flux001-047',datatime,0,data_shift); %下载数据
+% temp=fluxdata(:,24);
+% fluxdata(:,24)=fluxdata(:,23);
+% fluxdata(:,23)=temp;
 Flux_k=xlsread(filepath,'flux','C2:C48');
 for i=1:size(fluxdata,2)
     flux(i)=mean(fluxdata(data_start:data_end,i));
 end
 flux=flux.*Flux_k';
+
+
 %%
 % download the data of from IPF and multiply the coefficient computed ny SE
 load(GFcoefficent)
@@ -40,22 +45,29 @@ flux_k=coilData.flux;
 bt_k=coilData.bt;
 br_k=coilData.br;
 pfdata= downloaddata(shotnum,'cs_exp,ps1-10_exp',datatime,0,0);
+
 for i=1:size(pfdata,2)
-    IPF(i)=mean(pfdata(data_start:data_end,i));
+    temp=mean(pfdata(data_start:data_end,i));
+    if abs(temp)<100
+        IPF(i)=0;
+    else
+        IPF(i)=temp;
+    end
 end
+
 IPF(12:15)=0; % 先不考虑真空室内的主动线圈和被动线圈
-Flux_compute=flux_k.*repmat(IPF,size(flux_k,1),1);
-Bt_compute=bt_k.*repmat(IPF,size(bt_k,1),1);
-Br_compute=br_k.*repmat(IPF,size(br_k,1),1);
-flux2=sum(Flux_compute,2);
-Bt2=sum(Bt_compute,2);
-Br2=sum(Br_compute,2);
+Flux_compute=flux_k.*repmat(IPF',1,size(flux_k,2));
+Bt_compute=bt_k.*repmat(IPF',1,size(bt_k,2));
+Br_compute=br_k.*repmat(IPF',1,size(br_k,2));
+flux2=sum(Flux_compute,1);
+Bt2=sum(Bt_compute,1);
+Br2=sum(Br_compute,1);
 
 %%
 %-----------------画图------------------------------
 num1=1:52;
 figure('Color',[1 1 1]);plot(num1,Bt*10000,':o','Color','k','LineWidth',1.5,'MarkerSize',8,'MarkerFace','b','MarkerEdgeColor','b');
-hold on;plot(num1,Bt2*10000,':s','Color','k','LineWidth',1.5,'MarkerSize',8,'MarkerFace','r','MarkerEdgeColor','r');
+hold on;plot(num1,Bt2,':s','Color','k','LineWidth',1.5,'MarkerSize',8,'MarkerFace','r','MarkerEdgeColor','r');
 fillall(1,16,'[1,0,0]');
 fillall(17,25,'[0,1,0]');
 fillall(26,28,'[0,0,1]');
@@ -64,7 +76,7 @@ fillall(41,43,'[0,0,1]');
 fillall(44,52,'[0,1,0]');
 % fillall(22,32,'[0,0,1]');
 xlabel('$MPT-No$','interpreter','Latex');
-ylabel('$\rm B_{\theta} (Gs)$','interpreter','Latex');
+ylabel('$\rm B_{\theta} (G)$','interpreter','Latex');
 title([num2str(shotnum),'-Magnetic Probe'])
 legend('Experiment','Compute')
 set(gca,'fontname', 'Times New Roman', 'FontWeight', 'normal', 'FontSize', 22, 'LineWidth', 2, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.02 0.02],'Xgrid','off');
@@ -72,7 +84,7 @@ set(gca,'fontname', 'Times New Roman', 'FontWeight', 'normal', 'FontSize', 22, '
 %-----------------画图------------------------------
 num2=1:48;
 figure('Color',[1 1 1]);plot(num2,Br*10000,':o','Color','k','LineWidth',1.5,'MarkerSize',8,'MarkerFace','b','MarkerEdgeColor','b');
-hold on;plot(num2,Br2*10000,':s','Color','k','LineWidth',1.5,'MarkerSize',8,'MarkerFace','r','MarkerEdgeColor','r');
+hold on;plot(num2,Br2,':s','Color','k','LineWidth',1.5,'MarkerSize',8,'MarkerFace','r','MarkerEdgeColor','r');
 fillall(1,12,'[1,0,0]');
 fillall(13,21,'[0,1,0]');
 fillall(22,24,'[0,0,1]');
@@ -81,7 +93,7 @@ fillall(37,39,'[0,0,1]');
 fillall(40,48,'[0,1,0]');
 % fillall(22,32,'[0,0,1]');
 xlabel('$MPN-No$','interpreter','Latex');
-ylabel('$\rm B_R (Gs)$','interpreter','Latex');
+ylabel('$\rm B_R (G)$','interpreter','Latex');
 legend('Experiment','Compute')
 title([num2str(shotnum),'Magnetic Probe'])
 set(gca,'fontname', 'Times New Roman', 'FontWeight', 'normal', 'FontSize', 22, 'LineWidth', 2, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.02 0.02],'Xgrid','off');
@@ -97,17 +109,17 @@ fillall(29,38,'[0,1,1]');
 fillall(39,47,'[0,1,0]');
 % fillall(22,32,'[0,0,1]');
 xlabel('$FLUX-No$','interpreter','Latex');
-ylabel('$\rm \phi (Wb)$','interpreter','Latex');
+ylabel('$\rm \phi (mWb)$','interpreter','Latex');
 title([num2str(shotnum),'-Flux Loop'])
 legend('Experiment','Compute')
 set(gca,'fontname', 'Times New Roman', 'FontWeight', 'normal', 'FontSize', 22, 'LineWidth', 2, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.02 0.02],'Xgrid','off');
 
 %%
-relativeError.Bt=Bt'./Bt2;
-relativeError.Br=Br'./Br2;
-relativeError.flux=flux'./flux2;
-bt_err=abs(Bt'-Bt2)./Bt2*100;
-bn_err=abs(Br'-Br2)./Br2*100;
-flux_err=abs(flux'-flux2)./flux2*100;
+bt_err=abs(Bt*1e4-Bt2)./Bt2*100;
+bn_err=abs(Br*1e4-Br2)./Br2*100;
+flux_err=abs(flux-flux2)./flux2*100;
 figure('Color',[1 1 1]);stackplot({{num1,bt_err,'B_{\theta}'},{num2,bn_err,'B_R'},{num3,flux_err,'Flux'}},'Relative Error','No.',1)
+RelativeError.bt=Bt*1e4./Bt2;
+RelativeError.br=Br*1e4./Br2;
+RelativeError.flux=flux./flux2;
 %%
