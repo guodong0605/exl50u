@@ -1,0 +1,17 @@
+function signalCorrelation(shotnum,chns,t1,t2,Fs)
+datatime_default='0:5:1e-3';
+showfig_default=0;
+dshift_default=0;
+
+if (nargin <3) || isempty(datatime), datatime = datatime_default; end
+if (nargin <4) || isempty(showfig), showfig = showfig_default; end
+if (nargin <5) || isempty(dshift), dshift = dshift_default; end
+
+
+try
+    CurrentChannel=extractMultipleStrings(chns);  % change the input string to channel names
+catch
+    CurrentChannel=chns;
+end
+[dataArray]=downloaddata(shotnum,chns,)
+end
