@@ -25,7 +25,7 @@ plotlinewidth=2.5;
 titlefontsize=16;
 legend_fontsize=10;
 legend_box='off';
-
+ylabelfontsize=12;
 for i = 1:wavenum
     position = [0 0 0 0];
     position(1) = 0.18; % position is defined as [left bottom width height].
@@ -43,16 +43,31 @@ for i = 1:wavenum
             if sgoalyfilt_flag
                 y= sgolayfilt(y,3,21);
             end
-
+            if max(y)>1e3
+                y=y/1e3;
+                unitflag=1;
+            else
+                unitflag=0;
+            end
             hg{i} = plot(t,y,'linewidth',plotlinewidth,'Color',colors(1,:));
             tt=legend(temp_chn);
+            if unitflag
+                ylabel(['k',unitStr{i}],'Interpreter','none','fontSize',ylabelfontsize)
+            else
+                ylabel(unitStr{i},'Interpreter','none','fontSize',ylabelfontsize)
+            end
             set(gca, 'FontWeight', 'normal', 'FontSize', titlefontsize, 'LineWidth', figure_line_width, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.01 0.01],'Xgrid','on','Ygrid','on','Box','on','GridLineStyle',':')
             allaxes(i) = gca;
             ax = gca;
 
             % unit=units(find(strcmp(temp_chn,units_name)));
             % if isempty(unit)  unit={'V'}; end
-            ylabel(unitStr);
+            if unitflag
+                ylabel(['k',unitStr]);
+            else
+                ylabel(unitStr);
+            end
+
             set(gca, 'FontAngle',  'normal', 'FontName','Helvetica', 'FontUnits',  'points','FontSize',  titlefontsize, 'FontWeight', 'bold');
             set(tt,'FontSize',legend_fontsize,'box',legend_box);
             if i ~= wavenum
@@ -62,29 +77,36 @@ for i = 1:wavenum
             nplot=length(temp_chn);
             for j=1:nplot
                 [y,t,~,unitStr,~]=downloaddata(shotnum,temp_chn{j},datatime);
+                if j==1
+                    if max(y)>1e3
+                        unitflag=1;
+                        k=1e3;
+                    else
+                        unitflag=0;
+                        k=1;
+                    end
+                end
+
                 if sgoalyfilt_flag
                     y= sgolayfilt(y,3,21);
                 end
                 if j == 1
-                    hg{i} = plot(t,y,'linewidth',plotlinewidth,'Color',colors(j,:));
+                    hg{i} = plot(t,y/k,'linewidth',plotlinewidth,'Color',colors(j,:));
                 else
-                    hold on; plot(t,y,'linewidth',plotlinewidth,'Color',colors(j,:));
+                    hold on; plot(t,y/k,'linewidth',plotlinewidth,'Color',colors(j,:));
                 end
                 if j==nplot
                     tt=legend(temp_chn);
+                    if unitflag
+                        ylabel(['k',unitStr],'Interpreter','none','fontSize',ylabelfontsize)
+                    else
+                        ylabel(unitStr,'Interpreter','none','fontSize',ylabelfontsize)
+                    end
                 end
                 warning off;
                 set(gca, 'FontWeight', 'normal', 'FontSize', titlefontsize, 'LineWidth', figure_line_width, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.01 0.01],'Xgrid','on','Ygrid','on','Box','on','GridLineStyle',':')
                 allaxes(i) = gca;
                 ax = gca;
-
-                temp_ylabel=temp_chn{1};
-                unit=units(find(strcmp(temp_ylabel,units_name)));
-                % if isempty(unit)  unit={'V'}; end
-                % if strcmp(temp_ylabel,'mwi_ne001') ||strcmp(temp_ylabel,'mwi_ne002')
-                %     temp_ylabel='ne';
-                % end
-                ylabel(unitStr,'Interpreter','none');
                 set(gca, 'FontAngle',  'normal', 'FontName',   'Helvetica', 'FontUnits',  'points','FontSize',  titlefontsize, 'FontWeight', 'bold');
                 try
                     set(tt,'FontSize',legend_fontsize,'box',legend_box,'Interpreter','none');

@@ -1,8 +1,8 @@
 function CoilFieldView(coilInfo)
 pointNum=100;
 dGamma1=10e-3;
-Xgrid=21;
-Ygrid=21;
+Xgrid=41;
+Ygrid=41;
 fullPath = mfilename('fullpath');
 [fileDir, ~, ~] = fileparts(fileparts(fileparts(fullPath)));
 filename=fullfile (fileDir,'diagnostics','emd','data','EXL50UProbeFluxLoop.xlsx');
@@ -23,7 +23,7 @@ points = zeros(pointNum, 3); % 100行3列的矩阵，对应100个点的X,Y,Z坐�
 BSmag.Nfilament = 0;
 for i=1:numel(coilInfo)
     coilName=coilInfo{i}{1};
-    coilCurrent=coilInfo{i}{2};
+    coilCurrent=-coilInfo{i}{2};
     coilNum=str2double(regexp(coilName, '\d+','match'));
     coilType = regexp(coilName, '[a-zA-Z]+', 'match');
     switch coilType{1}
@@ -35,7 +35,7 @@ for i=1:numel(coilInfo)
             points(:, 1) = R * cos(theta); % X = R*cos(θ)
             points(:, 3) = R * sin(theta); % Y = R*sin(θ)
             points(:, 2) = Z;
-            [BSmag] = BSmag_add_filament(BSmag,points,coilCurrent*1e3*N,dGamma1);
+            [BSmag] = BSmag_add_filament(BSmag,points,coilCurrent*1e3*N,dGamma1,1);
 
     end
 end
@@ -48,7 +48,7 @@ BSmag_plot_field_points(BSmag,X_M,Y_M,Z_M); % shows the field points plane
 [BSmag,X,Y,Z,BX,BY,BZ] = BSmag_get_B(BSmag,X_M,Y_M,Z_M);
 figure(1)
     normB=sqrt(BX.^2+BY.^2+BZ.^2);
-    quiver3(X,Y,Z,BX./normB,BY./normB,BZ./normB,'m')
+    quiver3(X,Y,Z,BX./normB,BY./normB,BZ./normB,'g')
 
 % Plot By on the plane
 figure('Color',[1 1 1]);

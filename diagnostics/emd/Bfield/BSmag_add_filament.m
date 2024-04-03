@@ -1,4 +1,4 @@
-function [BSmag] = BSmag_add_filament(BSmag,Gamma,I,dGamma)
+function [BSmag] = BSmag_add_filament(BSmag,Gamma,I,dGamma,direction)
 %---------------------------------------------------
 %  NAME:      BSmag_add_filament.m
 %  WHAT:      Adds a filament to the BSmag analysis.
@@ -32,4 +32,16 @@ BSmag.Nfilament = n;
 
 %Plot P (where there is a current source)
 plot3(Gamma(:,1),Gamma(:,2),Gamma(:,3),'.-r')
+startIdx=25;
+endIdx=100;
+X=Gamma(:,1);
+Y=Gamma(:,3);
+if direction > 0 % À≥ ±’Î
+    quiver(X(startIdx), Y(startIdx), X(endIdx)-X(startIdx), Y(endIdx)-Y(startIdx), 'MaxHeadSize', 0.5, 'AutoScale', 'on', 'Color', 'r');
+else % ƒÊ ±’Î
+    quiver(X(endIdx), Y(endIdx), X(startIdx)-X(endIdx), Y(startIdx)-Y(endIdx), 'MaxHeadSize', 0.5, 'AutoScale', 'on', 'Color', 'r');
+end
+
+
+
 axis tight

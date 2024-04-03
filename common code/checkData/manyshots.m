@@ -5,6 +5,7 @@ function manyshots(shotnums, chn,Tstart,Tend)
 %   By default, the value of 'isShift' is 0, meaning the data will not be shifted.
 %   If 'isShift' is set to 1, the data will be shifted.
 % Example usage:
+
 %   manyshots([1,2,3], {'Ipl','Vloop'},-1,5,1e-3,1)
 %
 % Author: GitHub Copilot
@@ -19,7 +20,7 @@ plotlinewidth=2.5;
 titlefontsize=16;
 legend_fontsize=10;
 legend_box='off';
-
+unitflag=0;
 
 if (nargin <3) || isempty(Tstart), Tstart = Tstart_default; end
 if (nargin <4) || isempty(Tend), Tend = Tend_default; end
@@ -72,13 +73,24 @@ end
 
         for j = 1:shotnum
             temp=reshape(allData(j, i, :),1,size(allData,3));
+            if max(temp)>1e3
+                temp=temp/1e3;
+                unitflag=1;
+            else
+                unitflag=0;
+            end
             hold on; hg{i}=plot(time,temp','linewidth',plotlinewidth,'Color',colors(j,:));
             set(gca, 'FontWeight', 'normal', 'FontSize', titlefontsize, 'LineWidth', figure_line_width, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.01 0.01],'Xgrid','on','Ygrid','on','Box','on','GridLineStyle',':')
             set(gca, 'FontAngle',  'normal', 'FontName',   'Times New Roman', 'FontUnits',  'points','FontSize',  titlefontsize, 'FontWeight', 'bold');
             legendname{j}=[num2str(shots(j)),'/',chns{i}];
             if j==shotnum
                 legend(legendname,'FontSize',legend_fontsize,'box',legend_box,'Interpreter','none')
-                ylabel(unitStr{i},'Interpreter','none','fontSize',ylabelfontsize)
+                if unitflag
+                    ylabel(['k',unitStr{i}],'Interpreter','none','fontSize',ylabelfontsize)
+                else
+                    ylabel(unitStr{i},'Interpreter','none','fontSize',ylabelfontsize)
+                end
+                
             end
         end
 

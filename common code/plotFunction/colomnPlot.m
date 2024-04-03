@@ -7,15 +7,13 @@ end
 % 计算subplot的行数和列数
 numSubplots = numel(chnData);
 numRows = ceil(numSubplots / N);
-colors=[0,0,0;1 0 0;0,1,0;0,0,1;1,0,0.761904761904762;0,0,0;0.0793650793650794,0.582677165354331,1;0,0.582677165354331,0.349206349206349;0.523809523809524,0.149606299212598,0;0,0,0.412698412698413;0.253968253968254,0.527559055118110,0.603174603174603;0,1,0.984126984126984;0.698412698412698,1,0.492063492063492;1,0.653543307086614,0.936507936507937;0.634920634920635,0.385826771653543,1;0.444444444444444,0,0.269841269841270;1,0.173228346456693,0.428571428571429;1,0.574803149606299,0.0476190476190476;0.746031746031746,0.669291338582677,0.380952380952381;0.190476190476190,0.212598425196850,0;0,0.0708661417322835,0.158730158730159];
-
+fontsize=12;
 % 创建figure
-figure;
+
 % 设置figure的顶部标题
-sgtitle('EXL-50U discharge');
 
 % 计算每两列之间的间距参数，这里可以根据需要调整
-columnSpacing = 0.05; % 列间距
+columnSpacing = 0.03; % 列间距
 leftSpace=0.05;
 rightSpace=0.1;
 downSpace=0.10;
@@ -41,7 +39,11 @@ for i = 1:numSubplots
             legendInfo = chnData{i}{2}; % 第二个矩阵是图例信息
             yyaxisUsed = 'left';
             % 解析图例信息
-            legendsLeft = strsplit(legendInfo, ',');
+            try
+                legendsLeft = strsplit(legendInfo, ',');
+            catch
+                legendsLeft =legendInfo;
+            end
         end
     else
         yyaxisUsed = 'left';
@@ -80,18 +82,20 @@ for i = 1:numSubplots
         end
         hold off;
     end
-set(gca, 'FontWeight', 'bold', 'FontSize', 15, 'LineWidth', 1.1, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.01 0.01],'Xgrid','on','Ygrid','on','Box','on')
+set(gca, 'FontWeight', 'bold', 'FontSize', fontsize, 'LineWidth', 1.1, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.01 0.01],'Xgrid','on','Ygrid','on','Box','on')
 
     % 添加图例
     if ~isempty(legendsLeft) || ~isempty(legendsRight)
         % yyaxis left;
-        legend([legendsLeft, legendsRight], 'Location', 'northwest','FontSize',8);
+        legend([legendsLeft, legendsRight], 'Location', 'northwest','FontSize',8,'Box','off','Interpreter','none');
         warning off
     end
         % 设置标题、标签和字体
 
-    if row==numRows
+    if row>1
         set(gca, 'XTickLabel',[])
+    else
+        xlabel('Time(s)','FontSize',15,'FontWeight','bold')
     end
 
 end
