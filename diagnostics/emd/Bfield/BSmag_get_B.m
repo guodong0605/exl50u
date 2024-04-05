@@ -58,7 +58,7 @@ for nF = 1:BSmag.Nfilament % Loop on each filament
             y_M = Y(m,n,p);
             z_M = Z(m,n,p);
 
-            % Loop on each discretized segment of Gamma PkPk+1
+            % Loop on each discretized segment of Gamma Pk Pk+1
             for k = 1:length(x_P)-1
                 PkM3 = (sqrt((x_M-x_P(k))^2 + (y_M-y_P(k))^2 + (z_M-z_P(k))^2))^3;
                 DBx(k) = ((y_P(k+1)-y_P(k))*(z_M-z_P(k))-(z_P(k+1)-z_P(k))*(y_M-y_P(k)))/PkM3;

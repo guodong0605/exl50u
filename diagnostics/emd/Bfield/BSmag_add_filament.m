@@ -31,5 +31,5 @@ BSmag.filament(n).dGamma = dGamma;
 BSmag.Nfilament = n;
 
 %Plot P (where there is a current source)
-plot3(Gamma(:,1),Gamma(:,2),Gamma(:,3),'.-r')
-axis tight
+% plot3(Gamma(:,1),Gamma(:,2),Gamma(:,3),'.-r')
+% axis tight

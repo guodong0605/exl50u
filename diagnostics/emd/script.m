@@ -159,7 +159,32 @@ writematrix(k.mpt, filepath, 'Sheet', 'mpt', 'Range', mptRows);
 writematrix(k.mpn, filepath, 'Sheet', 'mpn', 'Range', mpnRows);
 %%
 
+coil=coilParam;
+xCenter = coil.mprGeometry.XCenter; % 中心点X坐标
+yCenter = coil.mprGeometry.ZCenter; % 中心点Y坐标
+xLength = coil.mprGeometry.W; % X方向长度
+yLength = coil.mprGeometry.H; % Y方向长度
+xGridNum = 3; % X方向网格数
+yGridNum = 7; % Y方向网格数
+theta = coil.mprGeometry.Angle+90; % 旋转角度
+isFig = 1; % 绘制图形
 
+% 调用函数
+[gridX, gridY] = generateGrid(xCenter, yCenter, xLength, yLength, xGridNum, yGridNum, theta, isFig);
+
+%%
+% 定义参数
+xCenter = [1; -2];  % 中心点X坐标数组
+yCenter = [1; -2];  % 中心点Y坐标数组
+xLength = [2; 3];   % X方向长度数组
+yLength = [4; 2];   % Y方向长度数组
+theta = [30; -45];  % 旋转角度数组
+xGridNum = 3;       % X方向网格数
+yGridNum = 4;       % Y方向网格数
+isFig = 1;          % 启用绘图
+
+% 调用优化后的generateGrid函数
+[gridX, gridY] = generateGrid(xCenter, yCenter, xLength, yLength, xGridNum, yGridNum, theta, isFig);
 
 
 
