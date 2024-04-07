@@ -9,35 +9,46 @@ function info=cineinfo(camera,shotnum)
 
 % CAUTION   there are two cameras around EXL50
 if camera==1
-        camera='M120';
-    else
-        camera='D240';
+    camera='M150';
+else
+    camera='M60';
 end
 
- switch camera
-        case 'M120'
-            if shotnum>=15213
-                cameraPath=['\\192.168.20.29\exl50-camera\',camera];
-            else
-                cameraPath=['\\192.168.20.25\exl50-camera\',camera];
-            end
-        case 'D240'
-            if shotnum>=15130
-                cameraPath=['\\192.168.20.29\exl50-camera\',camera];
-            else
-                cameraPath=['\\192.168.20.25\exl50-camera\',camera];
-            end
- end
+switch camera
+    case 'M120'
+        if shotnum>=15213
+            cameraPath=['\\192.168.20.29\exl50-camera\',camera];
+        else
+            cameraPath=['\\192.168.20.25\exl50-camera\',camera];
+        end
+    case 'D240'
+        if shotnum>=15130
+            cameraPath=['\\192.168.20.29\exl50-camera\',camera];
+        else
+            cameraPath=['\\192.168.20.25\exl50-camera\',camera];
+        end
+    case 'M150'
+            cameraPath='\\192.168.20.29\EXL50-Camera\M150';
+    case 'M60'
+            cameraPath='\\192.168.20.29\EXL50-Camera\M60';
+end
 
 %-------cine format------------------
 %%
-shotnum_name=[camera,'-',num2str(shotnum),'.cine'];
-cd(cameraPath);
-temp=dir('**/*.cine');
-index = find(strcmp({temp.name}, shotnum_name)==1);
-cinefilename=[temp(index,:).folder,'\',camera,'-',num2str(shotnum),'.cine'];
-if isempty(index)
-    msg=['数据库中没有当前炮号：',num2str(shotnum)];
+fileList = searchFiles(cameraPath, '.cine');
+cinefilename=[];
+for i = 1:length(fileList)
+    temp=fileList{i};
+    [~,filename]= fileparts(temp);
+    cinenumber=str2double(filename(6:end));
+    if shotnum==cinenumber
+        cinefilename=temp;
+        break;
+    end
+end
+
+if isempty(cinefilename)
+    msg=['There is No such a shotnum in database：',num2str(shotnum)];
     error(msg)
 end
 
