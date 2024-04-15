@@ -6,9 +6,8 @@ function manyshots(shotnums, chn,Tstart,Tend)
 %   If 'isShift' is set to 1, the data will be shifted.
 % Example usage:
 
-%   manyshots([1,2,3], {'Ipl','Vloop'},-1,5,1e-3,1)
-%
-% Author: GitHub Copilot
+% manyshots('3001:3003', 'ip,hcn_ne001,i_cs,ha009',-0.3,4)
+
 Tstart_default=-1;
 Tend_default=5;
 Fs_default=1e-2;
@@ -59,7 +58,10 @@ end
 
     figure;set (gcf,'Units','normalized','color','w'); % figure 1
     % colors=[1,0,0;0,0,1;0,1,0;1,0.00787401574803150,0;1,0,0.761904761904762;0,0,0;0.0793650793650794,0.582677165354331,1;0,0.582677165354331,0.349206349206349;0.523809523809524,0.149606299212598,0;0,0,0.412698412698413;0.253968253968254,0.527559055118110,0.603174603174603;0,1,0.984126984126984;0.698412698412698,1,0.492063492063492;1,0.653543307086614,0.936507936507937;0.634920634920635,0.385826771653543,1;0.444444444444444,0,0.269841269841270;1,0.173228346456693,0.428571428571429;1,0.574803149606299,0.0476190476190476;0.746031746031746,0.669291338582677,0.380952380952381;0.190476190476190,0.212598425196850,0;0,0.0708661417322835,0.158730158730159];
-    load('git\exl50u\common code\plotFunction\mycolors.mat');
+    fullPath = mfilename('fullpath');
+   fileDir = fileparts(fileparts(fileparts(fullPath)));
+    dataFilePath = fullfile(fileDir, 'common code/plotFunction/mycolors.mat');    
+    load(dataFilePath);
     for i = 1:chnnum   %根据通道的数量进行确定subplot的数量
         position = [0 0 0 0];
         position(1) = 0.18; % position is defined as [left bottom width height].
@@ -73,7 +75,7 @@ end
 
         for j = 1:shotnum
             temp=reshape(allData(j, i, :),1,size(allData,3));
-            if max(temp)>1e3
+            if max(abs(temp))>1e3
                 temp=temp/1e3;
                 unitflag=1;
             else

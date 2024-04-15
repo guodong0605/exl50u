@@ -11,7 +11,7 @@ function fillall(varargin)
 %   FILLALL([ax1 ax2...], ...) fill the area in the axes ax1, ax2 and etc.
 %
 %   See also patch, fill, fill3, area
-
+% example  fillall(1,14,'[1,0,0]',0.2);
 
 error(nargchk(2,4,nargin));   % check input arguments
 

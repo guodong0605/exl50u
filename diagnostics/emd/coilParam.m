@@ -15,7 +15,7 @@ classdef coilParam
             fullPath = mfilename('fullpath');
             fileDir = fileparts(fileparts(fileparts(fullPath)));
             probeFile = fullfile(fileDir, 'diagnostics', 'emd', 'data', 'EXL50UProbeFluxLoop.xlsx');
-            CoilParameter=readtable(probeFile,'Sheet','coils','VariableNamingRule','preserve',Range='A1:K16');
+            CoilParameter=readtable(probeFile,'Sheet','coils','VariableNamingRule','preserve',Range='A1:K17');
             FluxParameter=readtable(probeFile,'Sheet','flux','VariableNamingRule','preserve',Range='A1:D48');
 
             MPTParameter=readtable(probeFile,'Sheet','probeBt','VariableNamingRule','preserve',Range='A1:I53');
