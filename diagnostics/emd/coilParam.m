@@ -71,17 +71,17 @@ classdef coilParam
             obj.TFcoil=TFcoil;
             %-------------prepare for the CS coils points----------------
             %%
-            CS_R=PF.XCenter(1);
-            CS_height=PF.H(1)*PF.NY(1);
-            CS_Z=linspace(-CS_height/2,CS_height/2,PF.NY(1)*100);
-            theta=linspace(0,2*pi,PF.NY(1)*100);
-            CS.points=[CS_R*cos(theta'),CS_R*sin(theta'),CS_Z'];
-            CS.R=CS_R;
+            CS.R=PF.XCenter(1);
             CS.W=PF.W(1);
             CS.H=PF.H(1);
             CS.NX=PF.NX(1);
             CS.NY=PF.NY(1);
-            CS.N=PF.N(1);
+            CS.N=PF.N(1);            
+            CS_height=3;
+            CS_Z=linspace(-CS_height/2,CS_height/2,5000);
+            theta=linspace(0,2*pi*CS.NY,5000);
+            CS.points=[CS.R*cos(theta'),CS_Z',CS.R*sin(theta')];
+            
             obj.CScoil=CS;
             %%
             VVParam.VVin_X=table2array(VVParameter(:,1))/1e3;
@@ -140,6 +140,17 @@ classdef coilParam
             for i=1:numel(obj.fluxPosition.X)
                 text(obj.fluxPosition.X(i),obj.fluxPosition.Y(i), num2str(i),'HorizontalAlignment', 'center', 'VerticalAlignment', 'bottom','Color','m');
             end
+        end
+        function drawTF(obj)
+            tfcolor=[249 191 69]/255;
+            TF_X=[obj.TFcoil.TFin_X;obj.TFcoil.TFout_X];
+            TF_Z=[obj.TFcoil.TFin_Z;obj.TFcoil.TFout_Z];
+            hold on;patch(TF_X,TF_Z,tfcolor);
+        end
+        function drawCS(obj)
+            cscolor=[249 191 69]/255;
+            points=obj.CScoil.points;
+            hold on;plot3(points(:,1),points(:,2),points(:,3),'LineWidth',2,'Color',cscolor);
         end
         function [gridX,gridY]=grid(obj,type,xgridNum,ygridNum,isFig)
             if nargin<3  xgridNum=5;   end

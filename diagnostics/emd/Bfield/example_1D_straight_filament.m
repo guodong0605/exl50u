@@ -12,8 +12,8 @@ clear all, close all, clc
 BSmag = BSmag_init(); % Initialize BSmag analysis
 
 % Source points (where there is a current source)
-Gamma   = [0,0,-1; % x,y,z [m,m,m]
-           0,0,1];
+Gamma   = [0,0,-10; % x,y,z [m,m,m]
+           0,0,10];
 I = 1; % filament current [A]
 dGamma = 1e-3; % filament max discretization step [m]      
 [BSmag] = BSmag_add_filament(BSmag,Gamma,I,dGamma);
@@ -22,7 +22,7 @@ dGamma = 1e-3; % filament max discretization step [m]
 x_M = linspace(-1,1,50)'; % x [m]
 y_M = zeros(50,1); % y [m]
 z_M = 10e-2*ones(50,1); % z [m]
-BSmag_plot_field_points(BSmag,x_M,y_M,z_M); % -> shows the field point line
+% BSmag_plot_field_points(BSmag,x_M,y_M,z_M); % -> shows the field point line
 
 % Biot-Savart Integration
 [BSmag,X,Y,Z,BX,BY,BZ] = BSmag_get_B(BSmag,x_M,y_M,z_M);      
