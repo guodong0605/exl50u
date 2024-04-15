@@ -36,7 +36,7 @@ switch camera
         end
     case 'M150'
         cameraPath='\\192.168.20.29\EXL50-Camera\M150';
-    case '60'
+    case 'M60'
         cameraPath='\\192.168.20.29\EXL50-Camera\M60';
 end
 

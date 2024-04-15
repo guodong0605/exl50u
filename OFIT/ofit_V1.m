@@ -1062,10 +1062,10 @@ function downandplot(handles,shotnum,t1,dt)
         handles.movie_info.String='数据正在下载中...!';
         handles.movie_info.FontSize=20;
         if movie_param.isframe 
-            [info,picture]=downloadcine(movie_param.name,t1+dt,t1+dt,1,movie_param.camera,movie_param.isframe);
+            [info,picture]=downloadcine(movie_param.shotnum,t1+dt,t1+dt,1,movie_param.camera,movie_param.isframe);
         else
             
-            [info,picture]=downloadcine(movie_param.name,t1+dt,t1+dt,1,movie_param.camera);
+            [info,picture]=downloadcine(movie_param.shotnum,t1+dt,t1+dt,1,movie_param.camera);
         end
         movie_img1=reshape(picture,info.Height,info.Width);
         movie_img1=movie_img1/max(max(movie_img1));
@@ -1592,9 +1592,9 @@ if ~movie_param.RR
 end
 %-------------------------------------------------------------
 if movie_param.isframe
-[~,frame,time]=downloadcine(movie_param.name,movie_param.t1,movie_param.t2,movie_param.dframe,1,1);
+[~,frame,time]=downloadcine(movie_param.shotnum,movie_param.t1,movie_param.t2,movie_param.dframe,movie_param.camera,1);
 else
- [~,frame,time]=downloadcine(movie_param.name,movie_param.t1,movie_param.t2,movie_param.dframe,1);   
+ [~,frame,time]=downloadcine(movie_param.shotnum,movie_param.t1,movie_param.t2,movie_param.dframe,movie_param.camera);   
 end
 mp4filename=[movie_param.savename,'\',num2str(movie_param.shotnum)];
 v = VideoWriter(mp4filename,'MPEG-4');
