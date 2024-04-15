@@ -185,8 +185,10 @@ isFig = 1;          % 启用绘图
 
 % 调用优化后的generateGrid函数
 [gridX, gridY] = generateGrid(xCenter, yCenter, xLength, yLength, xGridNum, yGridNum, theta, isFig);
-
-
+%%
+R=linspace(0.3,1.65,100);
+BT=0.7457./(R+0.0159);
+hold on;plot(R,BT,'LineWidth',2.5,'Color','r')
 
 
 
