@@ -9,8 +9,8 @@ function output = extractMultipleStrings(inputStr)
     for i = 1:length(substrings)
         currentStr = strtrim(substrings{i});
         
-        % 正则表达式用于识别字符串的不同部分
-        pattern = '([a-zA-Z]*)(\d+)-(\d+)([a-zA-Z_]*)';
+        % 更新正则表达式用于识别字符串的不同部分
+        pattern = '([a-zA-Z_]+)(\d+)-(\d+)([a-zA-Z_]*)';
         tokens = regexp(currentStr, pattern, 'tokens');
         
         if ~isempty(tokens)

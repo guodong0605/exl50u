@@ -10,7 +10,11 @@ switch strname2
         unit='V';
     case 'csexp'
         unit='A';
-        case 'psexp'
+    case 'psexp'
         unit='A';
+    case 'zp'
+        unit='m';
+    case  'rp'
+        unit='m';
 end
 end
