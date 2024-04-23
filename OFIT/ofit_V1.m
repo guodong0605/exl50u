@@ -77,7 +77,7 @@ colormap_folder=[filefolder,'mycolormap']; %添加colormap资源
 addpath(colormap_folder);
 %----------初始化movie页面得参数，把所有和绘图相关参数放再movie_params中--------------------------
 movie_param.camera='M150';
-movie_param.shotnum=5000;
+movie_param.shotnum=3390;
 movie_param.contrast=0;
 movie_param.cmin=0;
 movie_param.cmax=1;
@@ -217,11 +217,7 @@ function download_Callback(hObject, eventdata, handles)
     load(param_path);
     cx=params.cx(shotnum);
     cy=params.cy;
-    if shotnum>12458
-        ratio=params.ratio2/1e3;
-    else
-        ratio=params.ratio;
-    end
+    ratio=params.ratio2/1e3;
     R1=linspace(-cx*ratio,(info.Width-cx)*ratio,info.Width);
     Z1=linspace(-cy*ratio,(info.Height-cy)*ratio,info.Height);
     [RR,ZZ]=meshgrid(R1,Z1);
@@ -701,7 +697,7 @@ temp2=0.85*max(Re);
 ue3=ue(ue>temp1);ve3=ve(ue>temp1);
 ue3(end+1:end+100)=0.2*ones(100,1);ve3(end+1:end+100)=linspace(-0.2,0.2,100);
 Re3=Re(Re>temp2);Ze3=Ze(Re>temp2);
-Re3(end+1:end+100)=0.2*ones(100,1);Ze3(end+1:end+100)=linspace(-0.2,0.2,100);
+Re3(end+1:end+100)=0.27*ones(100,1);Ze3(end+1:end+100)=linspace(-0.2,0.2,100);
 ellipse_fit1 = fit_ellipse(ue3,ve3);
 ellipse_fit2 = fit_ellipse(Re3,Ze3);
 %%
@@ -1132,11 +1128,8 @@ param_path=[filefolder,'params.mat'];
 load(param_path);
 cx=params.cx(movie_param.shotnum);
 cy=params.cy;
-if movie_param.shotnum>12458
-    ratio=params.ratio2/1e3;
-else
-    ratio=params.ratio;
-end
+ratio=params.ratio2/1e3;
+
 
 R1=linspace(-cx*ratio,(shotinfo.Width-cx)*ratio,shotinfo.Width);
 Z1=linspace(-cy*ratio,(shotinfo.Height-cy)*ratio,shotinfo.Height);

@@ -88,7 +88,10 @@ legend({'PF05','PF09','PF06','PF09','PF09','PF01','PF07','PF08','PF03','PF04'})
 %%
 [y,t,data]=downloaddata(2101,'itf01,ps1-10_exp','-3:5:1e-2',2,0);
 %%
-DataChns='IP,LoopV,ITF01,CS_EXP,AXUV004,AXUV006,SXR002,SXR004,IMP01,IMP02,IMP04,Ha001,HA002,HXR001,HXR002,mp006t';
+% DataChns='IP,LoopV,hcn_ne001,ecrh0_uk,CS_EXP,i_tf,AXUV006,SXR002,SXR004,IMP01,IMP02,IMP04,Ha001,HA002,HXR001,HXR002,mp006t';
+DataChns={'IP','LoopV','hcn_ne001','ecrh0_uk','CS_EXP','i_tf','AXUV006','SXR002,SXR004','IMP01,IMP02,IMP04','Ha001,HA002','HXR001,HXR002'};
+
+
 [y,t,data]=downloaddata(2276,DataChns,'-1:5:1e-3',0,0);
 fieldNames = fieldnames(data);
 t=t(1:end-1);
@@ -186,11 +189,10 @@ isFig = 1;          % 启用绘图
 % 调用优化后的generateGrid函数
 [gridX, gridY] = generateGrid(xCenter, yCenter, xLength, yLength, xGridNum, yGridNum, theta, isFig);
 %%
-R=linspace(0.3,1.65,100);
-BT=0.7457./(R+0.0159);
-hold on;plot(R,BT,'LineWidth',2.5,'Color','r')
+parameter(3574,-2,6,{{'ip'},{'ecrh0_uk'},{'hcn_ne001'},{'i_cs'},{'gas_out01'},{'gas_pres01'},{'ha004'}});
 
+set(gca, 'FontWeight', 'bold', 'FontSize', 13, 'LineWidth', 1.5, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.02 0.02],'Xgrid','on','Ygrid','on','Box','on')
+manyshots('3563:3566', 'ip,i_cs,hcn_ne001,gas_pres01,gas_out01',-2,4)
 
-
-
+manyshots('3566', 'ip,i_cs,hcn_ne001,gas_pres01,gas_out01,ha004',-2,4)
 

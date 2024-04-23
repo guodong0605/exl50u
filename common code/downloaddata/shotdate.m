@@ -12,6 +12,8 @@ elseif isnumeric(dateorshot) && dateorshot < 100000
     myDate = datestr(dateObject, 'yyyymmdd');
 
     fprintf('炮号 %s 对应的日期: %s\n', num2str(dateorshot),num2str(myDate));
+    fprintf('炮号 %s 对应的时间: %s\n', num2str(dateorshot),datestr(dateObject));
+
 else
     error('输入格式不正确。');
 end

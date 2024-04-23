@@ -32,11 +32,7 @@ boundy=y1(1+overlap/2:end-overlap/2);
 tempy(1:length(boundy)-500)=boundy(501:end);
 tempy(length(boundy)-500+1:length(boundy))=boundy(1:500);
 global shotnum
-if shotnum>12458
-        ratio=params.ratio2/1e3;
-    else
-        ratio=params.ratio;
-end
+ratio=params.ratio2/1e3;
 px=(tempx-params.cx(shotnum))*ratio;    % Image x axis in meter unit
 px=px';
 py=(tempy-params.cy)*ratio;    % Image x axis in meter unit

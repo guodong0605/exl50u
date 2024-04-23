@@ -1,4 +1,4 @@
-function [outputArray,time,outputData,unitStr,shotDate,currentshotnum]=downloaddata(shotnum,chns,datatime,showfig,dshift)
+function [outputArray,time,outputData,unitStr,shotDate,currentshotnum]=downloaddata(shotnum,chns,datatime,showfig,dshift,dshiftTime)
 % Example [xx,time]=downloaddata(17103,{'div004-06','div011-16'},'0:5:1e-3',1)
 % Example [xx,time]=downloaddata(17103,'div004-06','div011-16','0:5:1e-3',1)
 % This function is used to download data from EXl50U server, you can download multiple channels in one command,
@@ -15,6 +15,7 @@ function [outputArray,time,outputData,unitStr,shotDate,currentshotnum]=downloadd
 datatime_default='0:5:1e-3';
 showfig_default=0;
 dshift_default=0;
+dshiftTime_default=0.5; % The default time to do the polyfit of the rawdata is 0.5 seconds;
 currentFilePath = mfilename('fullpath');
 [currentDir,~,~] = fileparts(currentFilePath);
 [parentDir,~,~] = fileparts(currentDir);
@@ -24,6 +25,8 @@ colors=temp.colors;
 if (nargin <3) || isempty(datatime), datatime = datatime_default; end
 if (nargin <4) || isempty(showfig), showfig = showfig_default; end
 if (nargin <5) || isempty(dshift), dshift = dshift_default; end
+if (nargin <5) || isempty(dshift), dshift = dshift_default; end
+if (nargin <6) || isempty(dshift), dshiftTime = dshiftTime_default; end
 % 获取当前运行的.m文件的完整路径
 
 try
@@ -31,7 +34,8 @@ try
 catch
     CurrentChannel=chns;
 end
-dshiftTime=0.5; % The default time to do the polyfit of the rawdata is 0.5 seconds;
+
+
 strTreeName='exl50u';
 server='192.168.20.11';   %下载数据服务器
 server2='192.168.20.41';   %下载数据服务器
@@ -67,9 +71,9 @@ for i=1:length(CurrentChannel)    %下载数据的数量
     end
     eval(temp);
     if showfig==1
-        figure('Color',[1,1,1]);stackplot({{time,z,CurrentChannel{i}}},['shotnum',num2str(shotnum)]);
+        figure('Color',[1,1,1]);stackplot({{time,z,[CurrentChannel{i},'(',unitStr,')']}},['shotnum',num2str(shotnum)]);
         % figure('Color',[1,1,1]);stackplot({{time,z,unitStr}},['shotnum',num2str(shotnum)]);
-        legend(CurrentChannel{i});
+        legend([CurrentChannel{i},'(',unitStr,')']);
     end
 end
 % --------------如果showfig==2 表明要把所有通道的数据绘制到一张图上
@@ -132,6 +136,9 @@ initServerTree;
                 shotDate = mdsvalue(['DATE_TIME(getnci("\\' strTreeName '::TOP:FBC:' datechn '","TIME_INSERTED"))']);
             end
             unitStr = mdsvalue(['units_of(\' CurrentChannel ')']);
+            if strcmp(unitStr,' ')
+                unitStr=chnUnit(CurrentChannel);
+            end
         catch
             x=0;
             y=0;

@@ -17,12 +17,13 @@ wavenum=length(waveform);
 % f1=figure;set (gcf,'Units','normalized','Position',[0.1,0.1,0.25,0.7], 'WindowStyle', 'modal'); % figure 1
 fig=figure;set (gcf,'Units','normalized','color','w'); % figure 1
 title(['Shot',num2str(shotnum)])
-units_name={'ip','hcn_ne001','hcn_ne002','loopv','ps1_exp','ps2_exp','ps3_exp','ps4_exp','ps5_exp','ps6_exp','ps7_exp','ps8_exp','ps9_exp','ps10_exp','ps11_exp','ps12_exp','cs_exp','itf'};
-units={'kA','10^{17}/m^2','10^{17}/m^2','V',       'A','A','A','A','A','A','A','A','A','A','A','A','A','kA'};
-colors=[1,0.00787401574803150,0;0.0793650793650794,0.582677165354331,1;0,0.582677165354331,0.349206349206349;0.523809523809524,0.149606299212598,0;0,0,0.412698412698413;0.253968253968254,0.527559055118110,0.603174603174603;0,1,0.984126984126984;0.698412698412698,1,0.492063492063492;1,0.653543307086614,0.936507936507937;0.634920634920635,0.385826771653543,1;0.444444444444444,0,0.269841269841270;1,0.173228346456693,0.428571428571429;1,0.574803149606299,0.0476190476190476;0.746031746031746,0.669291338582677,0.380952380952381;0.190476190476190,0.212598425196850,0;0,0.0708661417322835,0.158730158730159];
+fullPath = mfilename('fullpath');
+fileDir = fileparts(fileparts(fileparts(fullPath)));
+dataFilePath = fullfile(fileDir, 'common code/plotFunction/mycolors.mat');
+load(dataFilePath);
 figure_line_width=2;
 plotlinewidth=2.5;
-titlefontsize=10;
+titlefontsize=14;
 legend_fontsize=10;
 legend_box='off';
 ylabelfontsize=8;
@@ -43,7 +44,7 @@ for i = 1:wavenum
             if sgoalyfilt_flag
                 y= sgolayfilt(y,3,21);
             end
-            if max(y)>1e3
+            if max(abs(y))>1e3
                 y=y/1e3;
                 unitflag=1;
             else
@@ -52,9 +53,9 @@ for i = 1:wavenum
             hg{i} = plot(t,y,'linewidth',plotlinewidth,'Color',colors(1,:));
             tt=legend(temp_chn);
             if unitflag
-                ylabel(['k',unitStr{i}],'Interpreter','none','fontSize',ylabelfontsize)
+                ylabel(['k',unitStr{i}],'Interpreter','tex','fontSize',ylabelfontsize)
             else
-                ylabel(unitStr{i},'Interpreter','none','fontSize',ylabelfontsize)
+                ylabel(unitStr{i},'Interpreter','tex','fontSize',ylabelfontsize)
             end
             set(gca, 'FontWeight', 'normal', 'FontSize', titlefontsize, 'LineWidth', figure_line_width, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.01 0.01],'Xgrid','on','Ygrid','on','Box','on','GridLineStyle',':')
             allaxes(i) = gca;
@@ -78,7 +79,7 @@ for i = 1:wavenum
             for j=1:nplot
                 [y,t,~,unitStr,~]=downloaddata(shotnum,temp_chn{j},datatime);
                 if j==1
-                    if max(y)>1e3
+                    if max(abs(y))>1e3
                         unitflag=1;
                         k=1e3;
                     else
@@ -98,9 +99,9 @@ for i = 1:wavenum
                 if j==nplot
                     tt=legend(temp_chn);
                     if unitflag
-                        ylabel(['k',unitStr],'Interpreter','none','fontSize',ylabelfontsize)
+                        ylabel(['k',unitStr],'Interpreter','tex','fontSize',ylabelfontsize)
                     else
-                        ylabel(unitStr,'Interpreter','none','fontSize',ylabelfontsize)
+                        ylabel(unitStr,'Interpreter','tex','fontSize',ylabelfontsize)
                     end
                 end
                 warning off;
