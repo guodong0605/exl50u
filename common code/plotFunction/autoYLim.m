@@ -1,4 +1,5 @@
 function autoYLim(figureHandle)
+% example autoYLim(gcf) 对当前figure进行y坐标标签自适应
 axesHandles = findobj(figureHandle, 'Type', 'axes');
 for i = 1:length(axesHandles)
     currentAxes = axesHandles(i);
@@ -8,9 +9,7 @@ for i = 1:length(axesHandles)
     end
     yLabelInterval = yTicks(2) - yTicks(1);
     currentYLim = get(currentAxes, 'YLim');
-
     allLines = findobj(currentAxes, 'Type', 'line');
-
     for j = 1:length(allLines)
         yData = get(allLines(j), 'YData');
         ymin = min(currentYLim(1), min(yData));

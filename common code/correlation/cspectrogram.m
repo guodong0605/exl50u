@@ -5,9 +5,9 @@ function [t_out, f_out, cpower_out] = cspectrogram(x, y, fs,nfft, overlap)
 %
 % INPUT PARAMETERS
 %   x, y:     two 1D series
-% 	nfft:     fft windows legnth, default: 1024
+%  nfft:     fft windows legnth, default: 1024
 %   overlap:  overlap of the windows, default: 0
-% 	fs:       sampling frequency (unit: kHz), default: 2000
+%  fs:       sampling frequency (unit: kHz), default: 2000
 %   frange:   frequency range of the output (unit: kHz), default: [0 fs/2]
 %   nensemble: ensemble number, default: 4
 %   ititle:   the title of this figure, default: 'Cross-power time evolution(a.u.)'
@@ -16,7 +16,7 @@ function [t_out, f_out, cpower_out] = cspectrogram(x, y, fs,nfft, overlap)
 % OUTPUT PARAMETERS
 % t: output time (start from 0)
 % f: output frequency
-%   cpower: cross power in time and frequency
+%  cpower: cross power in time and frequency
 %
 % DESCRIPTION
 % This is a function for time evolution of cross-power using csd.
@@ -28,15 +28,6 @@ function [t_out, f_out, cpower_out] = cspectrogram(x, y, fs,nfft, overlap)
 %
 % See also:
 % csd, xsd, spectrogram
-% 
-
-% Copyright (c) CAS Key Laboratory of Basic Plasma Physics, USTC 1958-2014
-% Author: Shen Huagang
-% Email: shg@mail.ustc.edu.cn
-% All Rights Reserved.
-% $Revision: 1.0$ Created on: 22-Apr-2014 19:38:33
-
-% write down your codes from here.
 
 fs_default = 1e5;  % default sampling rate
 nfft_default = 1024; % default nfft

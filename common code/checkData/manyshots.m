@@ -10,7 +10,7 @@ function manyshots(shotnums, chn,Tstart,Tend)
 
 Tstart_default=-1;
 Tend_default=5;
-Fs_default=1e-2;
+Fs_default=1e-3;
 isShift_default=0;
 div=0;
 ylabelfontsize=16;
@@ -45,15 +45,16 @@ allTime=allData;
 for k = 1:shotnum
     for n = 1:chnnum
         [channelData,~,~,unit] = downloaddata(shots(k), chns{n},datatime,0,isShift_default);
-
         if numel(channelData)<size(allData,3)
             allData(k, n, size(allData,3)-numel(channelData)+1:end) = channelData;
+            unitStr{n}=unit;
+        elseif numel(channelData)>size(allData,3)
+            allData(k, n, :) = channelData(1:end-1);
             unitStr{n}=unit;
         else
             allData(k, n, :) = channelData;
             unitStr{n}=unit;
         end
-
     end
 end
 

@@ -52,5 +52,5 @@ if showFig == 1
     set(gca, 'FontWeight', 'normal', 'FontSize', 15, 'LineWidth', 3, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.02 0.02],'Xgrid','on')
     colormap('JET');
     colorbar;
-    caxis([max(max(log(S))-15), max(max(log(S)))]);
+    autoClim
 end

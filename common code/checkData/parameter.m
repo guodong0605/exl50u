@@ -119,7 +119,6 @@ for i = 1:wavenum
             end
     end
     %%
-
     if i == 1
         title(['Shot:',num2str(shotnum)]);
     end

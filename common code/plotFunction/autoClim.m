@@ -1,16 +1,17 @@
-function autoClim(inputData, cthreshold)
+function autoClim(cthreshold,inputData)
 % Auto-adjusts the color limits of a plot based on data distribution.
 % inputData: Data to analyze (2D matrix for image data).
 % cthreshold: Threshold to define significant data range (default is 25).
 
 % Validate and parse input arguments
-if nargin < 1 || isempty(inputData) || ~isnumeric(inputData)
+if nargin < 1 || isempty(cthreshold) 
+    cthreshold = 25;
+end
+if nargin < 2 || isempty(inputData) || ~isnumeric(inputData)
     axChildren = get(gca, 'Children');
     zData = get(axChildren, 'CData');
 end
-if nargin < 2 || isempty(cthreshold) 
-    cthreshold = 25;
-end
+
 
 % Ensure inputData is a numeric matrix
 zData = double(zData);
@@ -29,7 +30,7 @@ clim([clower, chigher]);
 
 % Enhance plot appearance
 colormap('jet');
-colorbar;
+% colorbar;
 enhancePlotAppearance();
 
 end

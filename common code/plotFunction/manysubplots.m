@@ -6,7 +6,7 @@ DataChns_default={'ip','LoopV','hcn_ne001','ecrh0_uk','gas_pres01','gas_out01','
 plotLayout_default=ceil(length(DataChns_default)/4);
 dshift_default=0;
 dshiftTime_default=0.5;
-issave_default=1;
+issave_default=0;
 if (nargin <2)  timeRange = timeRange_default; end
 if (nargin <3) channelnames = DataChns_default; end
 if (nargin <4)  plotLayout = plotLayout_default; end
@@ -42,4 +42,5 @@ if issave == 1
     % 或使用 print 来保存
     % print('-dpng', filepath);
 end
+ refLines(gcf);
 end

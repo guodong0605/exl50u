@@ -16,5 +16,7 @@ switch strname2
         unit='m';
     case  'rp'
         unit='m';
+    otherwise
+        unit='V';
 end
 end

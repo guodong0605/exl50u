@@ -1,8 +1,8 @@
-shotnum=1092;
+shotnum=3621;
 chns='mir026';
 datatime='0:5:1e-5';
 Fs=1e5;
-y=downloaddata(shotnum,chns,'-1:7:1e-5',0,0);
+y=downloaddata(shotnum,chns,'-1:5:1e-5',0,0);
 [y,time]=downloaddata(shotnum,chns,datatime,0,0);
 window = hamming(256); % 窗函数
 noverlap = 128; % 重叠样本数

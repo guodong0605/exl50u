@@ -195,4 +195,41 @@ set(gca, 'FontWeight', 'bold', 'FontSize', 13, 'LineWidth', 1.5, 'XMinorTick', '
 manyshots('3563:3566', 'ip,i_cs,hcn_ne001,gas_pres01,gas_out01',-2,4)
 
 manyshots('3566', 'ip,i_cs,hcn_ne001,gas_pres01,gas_out01,ha004',-2,4)
+%%
+ [y1,t]=downloaddata(3646,'mir076','0:5:1e-5',0,0);
+ [y2,t]=downloaddata(3646,'mir081','0:5:1e-5',0,0);
+
+figure('Color',[1 1 1]);[S,f,t] = aspectrogram(y,1e5,0.5,512,0,5,1);
+
+[RR, f] = autoSpectrum(y1,1e5,512,2,3,1);
+
+specdensity(y1,y2,512,10,1,1e5,100);
+
+cspectrogram(y1, y2);
+
+xsd(y1, y2, 1e5, 1024)
+figure;autoSpectroscopy(y1,1e5,0.5,1024,0,5,1)
+%%
+fs = 1000;  % 采样频率 1000 Hz
+t = 0:1/fs:10-1/fs;
+x = cos(2*pi*30*t) + randn(size(t));  % 30 Hz的信号加上噪声
+y = sin(2*pi*60*t) + randn(size(t));  % 60 Hz的信号加上噪声
+
+window = hamming(256);  % 使用汉宁窗
+noverlap = 128;  % 重叠128点
+nfft = 512;  % FFT长度为512
+
+[Pxy, f] = csd(x, y, window, noverlap, nfft, fs);  % 计算CSD
+plot(f, abs(Pxy))  % 绘制互谱密度的幅度
+xlabel('Frequency (Hz)')
+ylabel('Magnitude')
+title('Cross-Spectral Density')
+
+
+
+
+
+
+
+
 
