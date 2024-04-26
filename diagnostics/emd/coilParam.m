@@ -77,7 +77,7 @@ classdef coilParam
             CS.NX=PF.NX(1);
             CS.NY=PF.NY(1);
             CS.N=PF.N(1);            
-            CS_height=3;
+            CS_height=3.099;
             CS_Z=linspace(-CS_height/2,CS_height/2,5000);
             theta=linspace(0,2*pi*CS.NY,5000);
             CS.points=[CS.R*cos(theta'),CS_Z',CS.R*sin(theta')];

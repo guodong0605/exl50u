@@ -154,7 +154,7 @@ end
 
 ax = gca;
 h = get(ax, 'xlabel');
-set(h, 'FontAngle',  'normal',  'Fontname','Helvetica', 'FontUnits',  'points', 'FontSize',  17, 'FontWeight', 'bold',  'string', Xlabel,'Interpreter','none');
+set(h, 'FontAngle',  'normal',  'Fontname','Helvetica', 'FontUnits',  'points', 'FontSize',  14, 'FontWeight', 'bold',  'string', Xlabel,'Interpreter','none');
 
 % link all x axes
 nn = 1;

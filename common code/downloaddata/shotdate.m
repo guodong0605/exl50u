@@ -25,9 +25,9 @@ fileDir = fileparts(fileparts(fileparts(fullPath)));
 dataFilePath = fullfile(fileDir, 'common code/downloaddata/data/shotinfo.mat');
 if ~exist(dataFilePath, 'file')
     % 如果shotdate.mat文件不存在，创建文件并存储数据
-    lastestshot = currentshot(); % 这个函数需要你自己实现，用来获取当前的最新炮号
-    [shots, dates] = generateShotDatePairs(lastestshot,1);
-    shotinfo=[shots,dates];
+    lastestshot = 2000; % 用来获取当前的最新炮号
+    [shots, dates,posixtime] = generateShotDatePairs(lastestshot,1);
+    shotinfo=[shots,dates,posixtime'];
     save(dataFilePath, 'shotinfo');
 else
     % 如果文件存在，加载数据
@@ -45,8 +45,8 @@ else
         lastestshot = currentshot(); % 同上，获取最新炮号
         lastShotInFile = max(shotinfo(:,1));
         if lastShotInFile < lastestshot
-            [newShots, newDates] = generateShotDatePairs(lastestshot, lastShotInFile + 1);
-            shotinfo=[shotinfo;[newShots,newDates]];
+            [newShots, newDates,posixTime] = generateShotDatePairs(lastestshot, lastShotInFile + 1);
+             shotinfo=[shotinfo;[newShots,newDates,posixTime']];
             save(dataFilePath, "shotinfo");
         end
         idx = ismember(shotinfo(:,2), max(shotinfo(:,2)));
@@ -58,7 +58,7 @@ else
 end
 end
 
-function [shots,dates] = generateShotDatePairs(currentshot, startShot)
+function [shots,dates,posixTime] = generateShotDatePairs(currentshot, startShot)
 if nargin < 2
     startShot = 1;
 end
@@ -69,10 +69,12 @@ for shot=startShot:currentshot
     try
         [~,~,~,~,dateString] = downloaddata(shot, 'ip01', '0:1:0.01', 0, 0);
         dateObject = datetime(dateString, 'InputFormat', 'd-MMM-yyyy HH:mm:ss.SS', 'Locale', 'en_US');
+        posixTime(k) = posixtime(dateObject);
         % 将datetime对象转换为指定格式的字符串
         formattedDateString = datestr(dateObject, 'yyyymmdd');
         % 将格式化的日期字符串转换为数字
         dates(k) = str2double(formattedDateString);
+        shot
         k=k+1;
     catch
         dates(k)=0;  

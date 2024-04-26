@@ -226,20 +226,18 @@ ylabel('Magnitude')
 title('Cross-Spectral Density')
 
 %%
-parameter(3757,-2,6,{{'i_pf1','i_pf3','i_pf5','i_pf7','i_pf9'},{'i_pf2','i_pf4','i_pf6','i_pf8','i_pf10'},{'i_tf'},{'ecrh0_uk'},{'i_cs'},{'ip02_h'}});
+parameter(3718,-2,6,{{'i_pf1','i_pf3','i_pf5','i_pf7','i_pf9'},{'i_pf2','i_pf4','i_pf6','i_pf8','i_pf10'},{'i_tf'},{'i_cs'},{'ip02_h'}});
 %%
-shotnum=3772;
+shotnum=3763;
 datatime='-2:5:1e-3';
 [eddy,t]=eddycurrent(shotnum,datatime);
 
-[ipf,~]= downloaddata(shotnum,'i_pf3,i_pf5,i_pf7',datatime,0,0);
+[ipf,~]= downloaddata(shotnum,'ipf3,',datatime,0,0);
 [ics,~]= downloaddata(shotnum,'i_cs',datatime,0,0);
-[loopv,~]= downloaddata(shotnum,'loopv',datatime,0,0);
 [ip,~]= downloaddata(shotnum,'ip',datatime,0,0);
 [itf,t]= downloaddata(shotnum,'i_tf',datatime,0,0);
 
-figure('Color',[1 1 1]);stackplot({{t,ipf(:,1),ipf(:,2),ipf(:,3),'IPF3(kA),IPF5(kA),IPF7(kA)'},{t,ip,-eddy,'IP(kA),I_eddy(kA)'},{t,ics/1e3,'I_CS(kA)'},{t,eddy,'I_eddy(kA)'}},num2str(shotnum))
-% figure('Color',[1 1 1]);stackplot({{t,ipf(:,1),ipf(:,2),ipf(:,3),'IPF3(kA),IPF5(kA),IPF7(kA)'},{t,ip,-eddy,'IP(kA),I_eddy(kA)'},{t,ics/1e3,'I_CS(kA)'},{t,loopv,'loopv(V)'}},num2str(shotnum))
+figure;stackplot({{t,ip,'IP(kA)'},{t,ics/1e3,'I_CS(kA)'},{t,eddy,'I_eddy(kA)'}},'Eddy current')
 
 
 
