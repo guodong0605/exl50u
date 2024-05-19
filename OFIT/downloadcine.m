@@ -8,7 +8,7 @@ function [info,picture,t]=downloadcine(shotnum,t1,t2,dframe,camera,isframe)
 % Edited by GuoDong 2020-03-27
 
 % CAUTION   there are two cameras around EXL50
-dt=0;
+dt=0.5;
 if nargin<2;  t1=0;                    end
 if nargin<3;  t2=inf;                  end
 if nargin<4;  dframe=1;            end

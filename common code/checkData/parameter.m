@@ -77,7 +77,7 @@ for i = 1:wavenum
         otherwise
             nplot=length(temp_chn);
             for j=1:nplot
-                [y,t,~,unitStr,~]=downloaddata(shotnum,temp_chn{j},datatime);
+                [y,t,unitStr]=downloaddata(shotnum,temp_chn{j},datatime);
                 if j==1
                     if max(abs(y))>1e3
                         unitflag=1;

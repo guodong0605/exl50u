@@ -22,6 +22,7 @@ text(1e-3,0.01,'$\alpha=Ap_0\exp\left(-Bp_0/E\right)$','Interpreter','latex')
 %---------------ECRH rosonant -----------
 
 %% w=e*B/me 
+p=1;
 w=28;
 me=9.11e-31;
 e=1.6e-19;

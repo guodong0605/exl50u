@@ -1,6 +1,6 @@
-function h = pcolor_all(varargin)
+function h = pcolor_all(varargin)sf
 % PCOLOR_ALL Pseudocolor (checkerboard) plot for showing all data
-%   PCOLOR_all has some fix to the origin version "pcolor"
+%   PCf'fffOLOR_all has some fix to the origin version "pcolor"
 %   1)  Show the value of last row and column
 %   2)  Move the center of grid to the physical center not the edge.
 %

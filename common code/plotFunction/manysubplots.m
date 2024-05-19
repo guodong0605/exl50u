@@ -20,7 +20,7 @@ for idx = 1:length(channelnames)
     % Parse current channel set
     currentChannels = strsplit(channelnames{idx}, ',');
     % Download data for the current set of channels
-    [y, t, ~,unit] = downloaddata(shotnum, currentChannels, timeRange, 0,isshift,dshiftTime);
+    [y, t, unit] = downloaddata(shotnum, currentChannels, timeRange, 0,isshift,dshiftTime);
     if max(abs(y))>1e3
         y=y/1e3;
         unit=['k',unit];

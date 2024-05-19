@@ -2,7 +2,7 @@ function fileList = searchFiles(startPath, filetype)
 % 查找指定目录及其子目录下所有特定类型的文件
 % 输入:
 % - startPath: 要搜索的目录路径
-% - filetype: 搜索的文件类型（如 '.wei.cine'）
+% - filetype: 搜索的文件类型（如 '.sif'，忽略大小写）
 % 输出:
 % - fileList: 符合条件的文件列表
 
@@ -13,6 +13,9 @@ fileList = {};
 if ~exist(startPath, 'dir')
     error('指定的路径不存在');
 end
+
+% 将文件类型转换为小写，以忽略大小写
+filetype = lower(filetype);
 
 % 递归搜索符合条件的文件
 fileList = recursiveSearch(startPath, fileList, filetype);
@@ -37,9 +40,9 @@ fileList = recursiveSearch(startPath, fileList, filetype);
                 fileList = recursiveSearch(fullfile(currentPath, items(i).name), fileList, filetype);
             end
         else
-            % 如果是文件且后缀匹配，则添加到列表
+            % 如果是文件，检查后缀是否匹配
             [~, ~, ext] = fileparts(items(i).name);
-            if strcmp(ext, filetype)
+            if strcmp(lower(ext), filetype)
                 fileList{end+1} = fullfile(currentPath, items(i).name);
             end
         end

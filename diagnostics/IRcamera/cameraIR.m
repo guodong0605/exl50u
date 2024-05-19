@@ -13,7 +13,7 @@ classdef cameraIR
         function obj = cameraIR()
             obj.filePostion='\\192.168.20.29\EXL50-Camera\exl50u\IRC-S2-150';
         end
-        function [IRdata,time,camerainfo,cameraPath2] = downloadhcc(obj,shotnum,t1,t2,dframe)
+        function [IRdata,time,camerainfo,cameraPath2] = downloadhcc(obj,shotnum,t1,t2,dframe,isframe)
             cameraPath='\\192.168.20.29\EXL50-Camera\exl50u\IRC-S2-150\';
             shotDate=shotdate(shotnum); %通过日期判断存放文件夹
             if shotnum<1e4
@@ -29,8 +29,13 @@ classdef cameraIR
             camerainfo.exposuretime=double(header.ExposureTime);
             camerainfo.shottime=header.POSIXTime;
             try
-                frame1=(t1+obj.dt)*camerainfo.framerate;
-                frame2=(t2+obj.dt)*camerainfo.framerate;
+                if isframe
+                    frame1=t1;
+                    frame2=t2;
+                else
+                    frame1=(t1+obj.dt)*camerainfo.framerate;
+                    frame2=(t2+obj.dt)*camerainfo.framerate;
+                end
                 [data, header] = readIRCam(cameraPath2, 'Frames', frame1:dframe:frame2);
                 IRdata = formImage(header(1), data);
                 time = t1+double([header.POSIXTime])+double([header.SubSecondTime])*1e-7-double(header(1).POSIXTime)-double(header(1).SubSecondTime)*1e-7;

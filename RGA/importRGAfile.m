@@ -36,46 +36,48 @@ info.energy=infoSet{12};
 
 %% 设置导入选项并导入数据
 opts = delimitedTextImportOptions("NumVariables", 11);
-
-% 指定范围和分隔符
-opts.DataLines = [34,Inf];
-opts.Delimiter = " ";
-
-% 指定列名称和类型
-opts.VariableNames = ["Times", "Channel1", "Channel2", "Channel3", "Channel4", "Channel5", "Channel6", "Channel7", "Channel8", "Channel9", "Channel10"];
 opts.VariableTypes = ["double", "double", "double", "double", "double", "double", "double", "double", "double", "double", "double"];
-
-% 指定文件级属性
 opts.ExtraColumnsRule = "ignore";
 opts.EmptyLineRule = "read";
-opts.ConsecutiveDelimitersRule = "join";
-opts.LeadingDelimitersRule = "ignore";
+opts.DataLines = [34, Inf];
+opts.Delimiter = ",";
+rgadata=readtable(filename, opts);
+if isnan(table2array(rgadata(1,2)))
+    opts.Delimiter = " ";
+    % 指定文件级属性
+    opts.ConsecutiveDelimitersRule = "join";
+    opts.LeadingDelimitersRule = "ignore";
+    opts.VariableNames = ["Times", "Channel1", "Channel2", "Channel3", "Channel4", "Channel5", "Channel6", "Channel7", "Channel8", "Channel9", "Channel10"];
+    opts = setvaropts(opts, "Times", "TrimNonNumeric", true);
+    opts = setvaropts(opts, "Times", "ThousandsSeparator", ",");
+    rgadata=readtable(filename, opts);
+end
+%%
 
-% 指定变量属性
-opts = setvaropts(opts, "Times", "TrimNonNumeric", true);
-opts = setvaropts(opts, "Times", "ThousandsSeparator", ",");
-% 导入数据
-rgadata = readtable(filename, opts);
 rgadata2=table2array(rgadata);
 rgadata2(:,1)=rgadata2(:,1)+dateNum;
 if fig
+    warning off;
     filepath=mfilename("fullpath");
     filepath2=fileparts(fileparts(filepath));
     colorpath=fullfile(filepath2,"common code/plotFunction/mycolors.mat");
     load(colorpath);
-    figure('Color',[1 1 1])
-
+    figure('Color',[1 1 1],'Units','normalized','Position',[0,0,0.8,0.8])
     posixTimes = rgadata2(:, 1);  % 第一列是时间戳数据
     time = datetime(posixTimes, 'ConvertFrom', 'posixtime');
     for i=1:size(rgadata2,2)-1
         hold on; plot(time,rgadata2(:,i+1),'LineWidth',2,'Color',colors(i,:))
     end
-    set(gca, 'FontWeight', 'bold', 'FontSize', 16, 'LineWidth', 1.5, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.02 0.02],'Xgrid','on','Ygrid','on','Box','on')
+    set(gca, 'FontWeight', 'bold', 'FontSize', 12, 'LineWidth', 1.5, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.02 0.02],'Xgrid','on','Ygrid','on','Box','on')
     title('RGA')
     ax = gca;  % 获取当前坐标轴句柄
+    ylabel('Pa')
+    xlabel('Time')
     ax.XAxis.TickLabelFormat = 'yyyy-MM-dd HH:mm:ss';  % 使用\n换行符分隔日期和时间
     ax.XAxis.TickLabelRotation = 10;
-    legend(info.elementName)
+    set(ax,"YScale",'log')
+    t=legend(info.elementName);
+    set(t,"Location","best")
 end
 
 end

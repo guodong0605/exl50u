@@ -96,7 +96,7 @@ for i = 1:wavenum
                     hold on; hg{i}=plot(temp{1},temp{j+1}, 'Tag', stackplottag,'linewidth',2,'color',colors(j,:));
                 end
                 if j==nplot
-                    t1=legend(str);set(t1,'interpreter','none','FontSize',12)
+                    t1=legend(str);set(t1,'interpreter','none','FontSize',8)
                     ylabel(str{1},'interpreter','none');
                 end
             end
@@ -107,7 +107,7 @@ for i = 1:wavenum
     %%
     %     setytick(gca,4,1);
     allaxes(i) = gca;
-    set(gca, 'FontWeight', 'bold', 'FontSize', 16, 'LineWidth', 1.5, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.02 0.02],'Xgrid','on','Ygrid','on','Box','on')
+    set(gca, 'FontWeight', 'bold', 'FontSize', 12, 'LineWidth', 1.5, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.02 0.02],'Xgrid','on','Ygrid','on','Box','on')
     if strcmpi(gridopt,'grid')
         grid on;
     end
@@ -154,7 +154,7 @@ end
 
 ax = gca;
 h = get(ax, 'xlabel');
-set(h, 'FontAngle',  'normal',  'Fontname','Helvetica', 'FontUnits',  'points', 'FontSize',  14, 'FontWeight', 'bold',  'string', Xlabel,'Interpreter','none');
+set(h, 'FontAngle',  'normal',  'Fontname','Helvetica', 'FontUnits',  'points', 'FontSize',  12, 'FontWeight', 'bold',  'string', Xlabel,'Interpreter','none');
 
 % link all x axes
 nn = 1;

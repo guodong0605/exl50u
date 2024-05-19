@@ -22,7 +22,7 @@ function varargout = ofit_V1(varargin)
 
 % Edit the above text to modify the response to help ofit_V1
 
-% Last Modified by GUIDE v2.5 21-Mar-2024 16:00:32
+% Last Modified by GUIDE v2.5 08-May-2024 16:25:27
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -52,6 +52,7 @@ function ofit_V1_OpeningFcn(hObject, eventdata, handles, varargin)
 % varargin   command line arguments to ofit_V1 (see VARARGIN)
 
 % Choose default command line output for ofit_V1
+set(handles.figure1,'Position',[0,0,477,636])
 handles.output = hObject;
 
 %-----------  1 把子路径中的资源添加到matlab路径-----------
@@ -124,13 +125,14 @@ if ~fitting_flag
    handles.Info_text.FontSize=15; 
 end
 %------------------OFIT初始化-------------
-global img1 img2 img3 img4 threshold_value mystep;
+global img1 img2 img3 img4 threshold_value mystep inner_x;
 img1=[];
 img2=[];
 img3=[];
 img4=[];
 threshold_value=0;
 mystep=0;
+inner_x=0.265;
 fig1=[];
 set(handles.radiobutton1,'Value',0);
 set(handles.radiobutton2,'Value',0);
@@ -690,14 +692,16 @@ end
 
 function ellipse_fitting_Callback(hObject, eventdata, handles)
 %-------------椭圆拟合边界---------------------
-global ue ve Re Ze shotnum time fig1 px ellipse_fit1  ellipse_fit2 mystep o2 o2a o2b center_width
+global ue ve Re Ze shotnum time fig1 px ellipse_fit1  ellipse_fit2 mystep o2 o2a o2b center_width inner_x ellipse_fit1  ellipse_fit2
+inner_x=str2double(handles.inner_x.String);
 if mystep==4
+    addPoint=1000;
 temp1=0.85*max(ue);
 temp2=0.85*max(Re);
-ue3=ue(ue>temp1);ve3=ve(ue>temp1);
-ue3(end+1:end+100)=0.2*ones(100,1);ve3(end+1:end+100)=linspace(-0.2,0.2,100);
-Re3=Re(Re>temp2);Ze3=Ze(Re>temp2);
-Re3(end+1:end+100)=0.27*ones(100,1);Ze3(end+1:end+100)=linspace(-0.2,0.2,100);
+ue3=ue(ue>temp1);ve3=ve(ue>temp1);  mid_y=(ve3(1)+ve3(end))/2;
+ue3(end+1:end+addPoint)=inner_x*ones(addPoint,1);ve3(end+1:end+addPoint)=linspace(0.2,-0.2,addPoint)+mid_y;
+Re3=Re(Re>temp2); Ze3=Ze(Re>temp2);
+Re3(end+1:end+addPoint)=inner_x*ones(addPoint,1);Ze3(end+1:end+addPoint)=linspace(0.2,-0.2,addPoint)+mid_y;
 ellipse_fit1 = fit_ellipse(ue3,ve3);
 ellipse_fit2 = fit_ellipse(Re3,Ze3);
 %%
@@ -823,7 +827,7 @@ function savedata_Callback(hObject, eventdata, handles)
 % hObject    handle to savedata (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-global current_fig_num img1 img2 img3 img4 px py Re Ze ze_max mystep o2 o2a o2b;
+global current_fig_num img1 img2 img3 img4 px py Re Ze ze_max mystep o2 o2a o2b ellipse_fit1 ellipse_fit2;
 if mystep>=1
 temp=eval(['img',num2str(current_fig_num)]);
 ofit.img=temp;
@@ -835,7 +839,9 @@ ofit.lcfs=ze_max;
 ofit.o=o2;
 ofit.a=o2a;
 ofit.b=o2b;
-assignin('base','ofti_output',ofit) 
+ofit.ellipse1=ellipse_fit1;
+ofit.ellipse2=ellipse_fit2;
+assignin('base','ofit',ofit) 
 handles.Info_text.String='数据已保存到工作空间ofit_output';
 handles.Info_text.FontSize=16;
 else
@@ -875,6 +881,7 @@ function menu_ofit_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 set(handles.panel_ofit,'Visible','on');
 set(handles.panel_movie,'Visible','off');
+set(handles.panel_ofit,'Position',[0,0,477,636])
 
 % --------------------------------------------------------------------
 function menu_movie_Callback(hObject, eventdata, handles)
@@ -883,6 +890,7 @@ function menu_movie_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 set(handles.panel_ofit,'Visible','off');
 set(handles.panel_movie,'Visible','on');
+set(handles.panel_movie,'Position',[0,0,477,636])
 
 % --- Executes during object creation, after setting all properties.
 function menu_ofit_CreateFcn(hObject, eventdata, handles)
@@ -1998,3 +2006,62 @@ function panel_ofit_ButtonDownFcn(hObject, eventdata, handles)
 % hObject    handle to panel_ofit (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+
+function inner_x_Callback(hObject, eventdata, handles)
+% hObject    handle to inner_x (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of inner_x as text
+%        str2double(get(hObject,'String')) returns contents of inner_x as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function inner_x_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to inner_x (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in radiobutton13.
+function radiobutton13_Callback(hObject, eventdata, handles)
+% hObject    handle to radiobutton13 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of radiobutton13
+global fig1 current_fig_num img1 img2 img3 img4 RR ZZ shotnum time mystep;
+% hObject    handle to pushbutton12 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+if mystep
+    temp=eval(['img',num2str(current_fig_num)]);
+    temp1=flipud(temp);
+    eval(['img',num2str(current_fig_num),'=temp1;']);
+    figure(fig1);
+    mypcolor(fig1,RR,ZZ,temp1);
+    if mystep<3
+        t0=text(min(RR(:,1))+0.2,1.5,['shot:',num2str(shotnum),'@',num2str(time),'s']);
+        set(t0,'Interpreter','latex','color','w','fontsize',20)
+    end
+    handles.Info_text.String='已对图像进行上下翻转！';
+    handles.Info_text.FontSize=18;
+else
+    handles.Info_text.String='请先下载数据！';
+    handles.Info_text.FontSize=18;
+end
+
+
+% --- Executes during object creation, after setting all properties.
+function movie_download_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to movie_download (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called

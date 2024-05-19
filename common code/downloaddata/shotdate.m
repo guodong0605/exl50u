@@ -6,7 +6,8 @@ if length(num2str(dateorshot)) == 8
     myDate=processDateInput(dateNum);
 elseif isnumeric(dateorshot) && dateorshot < 100000
     % 输入是炮号
-    [~,~,~,~,myDate] = downloaddata(dateorshot, 'ip01', '0:1:0.01', 0, 0);
+    [~,~,~,info] = downloaddata(dateorshot, 'ip01', '0:1:0.01', 0, 0);
+    myDate=info{1}.shotDate;   
     dateObject = datetime(myDate, 'InputFormat', 'd-MMM-yyyy HH:mm:ss.SS', 'Locale', 'en_US');
     % 将datetime对象转换为指定格式的字符串
     myDate = datestr(dateObject, 'yyyymmdd');

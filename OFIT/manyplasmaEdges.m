@@ -1,4 +1,4 @@
-function [a,b,lcfs,x]=manyplasmaEdges(shotnum,t1,t2,dt)
+function [a,b,lcfs,t]=manyplasmaEdges(shotnum,t1,t2,dt)
 % Check if the parallel pool is active, if not, start one
 pool = gcp('nocreate'); % Get the current parallel pool
 if isempty(pool)

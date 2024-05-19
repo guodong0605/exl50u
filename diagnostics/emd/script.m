@@ -226,23 +226,55 @@ ylabel('Magnitude')
 title('Cross-Spectral Density')
 
 %%
-parameter(3757,-2,6,{{'i_pf1','i_pf3','i_pf5','i_pf7','i_pf9'},{'i_pf2','i_pf4','i_pf6','i_pf8','i_pf10'},{'i_tf'},{'ecrh0_uk'},{'i_cs'},{'ip02_h'}});
+parameter(3803,-3,2,{{'i_pf1','i_pf3','i_pf5','i_pf7','i_pf9'},{'i_pf2','i_pf4','i_pf6','i_pf8','i_pf10'},{'i_tf'},{'ecrh0_uk'},{'i_cs'},{'ip02_h'}});
 %%
-shotnum=3772;
-datatime='-2:5:1e-3';
+shotnum=3744;
+datatime='-1:2:1e-3';
 [eddy,t]=eddycurrent(shotnum,datatime);
 
-[ipf,~]= downloaddata(shotnum,'i_pf3,i_pf5,i_pf7',datatime,0,0);
+[loopv,~]= downloaddata(shotnum,'loopv',datatime,0,0);
+[ne,tne]= downloaddata(shotnum,'hcn_ne001',datatime,0,0);
 [ics,~]= downloaddata(shotnum,'i_cs',datatime,0,0);
 [loopv,~]= downloaddata(shotnum,'loopv',datatime,0,0);
 [ip,~]= downloaddata(shotnum,'ip',datatime,0,0);
 [itf,t]= downloaddata(shotnum,'i_tf',datatime,0,0);
+[ecrh,~]= downloaddata(shotnum,'ecrh0_uk',datatime,0,0);
 
-figure('Color',[1 1 1]);stackplot({{t,ipf(:,1),ipf(:,2),ipf(:,3),'IPF3(kA),IPF5(kA),IPF7(kA)'},{t,ip,-eddy,'IP(kA),I_eddy(kA)'},{t,ics/1e3,'I_CS(kA)'},{t,eddy,'I_eddy(kA)'}},num2str(shotnum))
+[flux,tflux]=downloaddata(shotnum,'flux007',datatime,0,0);
+flux=flux*0.0795;
+loopIn=gradient(flux)*1e3;
+
+
+figure('Color',[1 1 1]);stackplot({{t,-smooth(loopIn./eddy*1e3,20),'uΩ'},{t,ip,-eddy,'IP(kA),I_eddy(kA)'},{t,ics/1e3,'I_CS(kA)'},{t,-loopv,smooth(loopIn,20),'V_out,V_in'}},num2str(shotnum))
 % figure('Color',[1 1 1]);stackplot({{t,ipf(:,1),ipf(:,2),ipf(:,3),'IPF3(kA),IPF5(kA),IPF7(kA)'},{t,ip,-eddy,'IP(kA),I_eddy(kA)'},{t,ics/1e3,'I_CS(kA)'},{t,loopv,'loopv(V)'}},num2str(shotnum))
+%%
+component={{'inconel625',2*pi*260,8,2324},
+    {'inconel625',2*pi*330,12,600},
+    {'inconel625',2*pi*330,12,600},
+    {'inconel625',2*pi*325,5,600},
+    {'inconel625',2*pi*325,5,600},
+    {'SS316L',2*pi*750,35,1500},
+    {'SS316L',2*pi*750,35,1500},
+    {'SS316L',2*pi*1410,30,620},
+    {'SS316L',2*pi*1410,30,620},
+    {'SS316L',2*pi*1655,20,2400}  };
 
+%%
+profile on   % 开启性能分析
+filename= '\\192.168.20.29\EXL50-Camera\exl50u\IRC-S2-150\20240515\04153\04153.hcc';
+[data, header] = readIRCam(filename, 'Frames', 1:10);
+profile viewer  % 查看性能分析报告
+profile off  % 关闭性能分析
 
+%%
+% 假设cameraParams是标定得到的相机参数对象
+R = cameraParams.RotationMatrices(:,:,1); % 获取第一个视图的旋转矩阵
+t = cameraParams.TranslationVectors(1,:); % 获取第一个视图的平移向量
 
+% 计算相机光学中心到标定板的距离
+distance = norm(t); % 计算平移向量的欧几里得范数
+% 显示距离
+disp(['相机光学中心到标定板的距离: ', num2str(distance), ' 单位: 标定板坐标系的单位']);
 
 
 

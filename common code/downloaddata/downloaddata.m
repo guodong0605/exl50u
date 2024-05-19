@@ -1,4 +1,4 @@
-function [outputArray,time,outputData,unitStr,shotDate,currentshotnum]=downloaddata(shotnum,chns,datatime,showfig,dshift,dshiftTime)
+function [outputArray,time,unitStr,info]=downloaddata(shotnum,chns,datatime,showfig,dshift,dshiftTime)
 % Example [xx,time]=downloaddata(17103,{'div004-06','div011-16'},'0:5:1e-3',1)
 % Example [xx,time]=downloaddata(17103,'div004-06','div011-16','0:5:1e-3',1)
 % This function is used to download data from EXl50U server, you can download multiple channels in one command,
@@ -25,7 +25,6 @@ colors=temp.colors;
 if (nargin <3) || isempty(datatime), datatime = datatime_default; end
 if (nargin <4) || isempty(showfig), showfig = showfig_default; end
 if (nargin <5) || isempty(dshift), dshift = dshift_default; end
-if (nargin <5) || isempty(dshift), dshift = dshift_default; end
 if (nargin <6) || isempty(dshift), dshiftTime = dshiftTime_default; end
 % 获取当前运行的.m文件的完整路径
 
@@ -47,7 +46,7 @@ end
 outputData=[];
 %--------    根据通道的数量，利用for循环进行下载数据-------------------------
 for i=1:length(CurrentChannel)    %下载数据的数量
-    [z,time,unitStr,shotDate,currentshotnum]=mydb(CurrentChannel{i},datatime,strTreeName);  %调用子函数mydb进行数据下载
+    [z,time,unitStr,infoTemp]=mydb(CurrentChannel{i},datatime,strTreeName);  %调用子函数mydb进行数据下载
     if dshift                   %是否要对数据进行0漂处理
         try
             pattern = '^([-+]?\d+)'; % 正则表达式模式
@@ -75,6 +74,7 @@ for i=1:length(CurrentChannel)    %下载数据的数量
         % figure('Color',[1,1,1]);stackplot({{time,z,unitStr}},['shotnum',num2str(shotnum)]);
         legend([CurrentChannel{i},'(',unitStr,')']);
     end
+        info{i}=infoTemp;
 end
 % --------------如果showfig==2 表明要把所有通道的数据绘制到一张图上
 if showfig==2
@@ -92,7 +92,7 @@ if showfig==2
 end
 %-----------------------------------------------
 initServerTree;
-
+%-----------------------------------------------
     function initServerTree(varargin)
         if nargin>0  % should be 3
             %% connect and open
@@ -108,8 +108,7 @@ initServerTree;
             end
         end
     end
-
-    function [y,x,unitStr,shotDate,currentshotnum]=mydb(CurrentChannel,datatime,strTreeName)
+    function [y,x,unitStr,infomation]=mydb(CurrentChannel,datatime,strTreeName)
         if ~isempty(datatime)
             timeWindow=datatime;
             pattern =':'; % '[-\d\.]+';
@@ -128,6 +127,8 @@ initServerTree;
             x=mdsvalue(['dim_of(\' CurrentChannel ')']);
             y=mdsvalue(['\' CurrentChannel]);
             currentshotnum=mdsvalue('current_shot(''exl50u'')');
+            infostring=mdsvalue(['\' CurrentChannel,'.info']);
+            infomation=extractInfo(infostring);
             try
                 datechn=['ad',CurrentChannel];
                 shotDate = mdsvalue(['DATE_TIME(getnci(\' datechn ',"TIME_INSERTED"))']);
@@ -152,6 +153,43 @@ initServerTree;
             y=0;
             unitStr='';
         end
+        infomation.shotDate=shotDate;
+        infomation.currentshotNum=currentshotnum;
+    end
+    function info=extractInfo(str)
+        % Example string
+        % str = "gain:1000,factor:10,offset:0.1,unit:G,desc:this diagnostic is used to measure the plasma edge magnetic field";
 
+        % Regular expression to extract key-value pairs
+        % Pattern Explanation:
+        % - (?<key>\w+): Matches and captures the key consisting of one or more word characters
+        % - : Matches the literal colon separator
+        % - (?<value>[^,]+): Matches and captures the value consisting of characters up to a comma
+        pattern = '(?<key>\w+):(?<value>[^,]+)';
+
+        % Apply the regular expression
+        tokens = regexp(str, pattern, 'names');
+
+        % Initialize a cell array of structures if you have multiple entries
+        info = {};
+
+        % Assuming tokens is not empty and contains the necessary fields
+        if ~isempty(tokens)
+            info = struct();
+            for d = 1:length(tokens)
+                key = tokens(d).key;
+                value = tokens(d).value;
+                % Convert numerical values from strings to numbers where appropriate
+                if any(isstrprop(value, 'digit'))  % Check if 'value' contains digits
+                    if contains(value, '.')
+                        info.(key) = str2double(value);  % Convert to double if it contains a decimal point
+                    else
+                        info.(key) = str2num(value);  % Convert to number (integer)
+                    end
+                else
+                    info.(key) = value;  % Store as string
+                end
+            end
+        end
     end
 end

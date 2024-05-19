@@ -1,0 +1,33 @@
+function [resistances, totalResistance] = computeResistances(components)
+    % 定义材料电阻率 (单位：欧姆·米)
+    resistivities = struct('inconel625', 1.3e-6, 'SS316L', 0.75e-6, 'tungsten', 0.055e-6);
+
+    numComponents = length(components);
+    resistances = zeros(numComponents, 1);
+    
+    for i = 1:numComponents
+        component = components{i};
+        material = component{1};
+        L_mm = component{2};
+        a_mm = component{3};
+        b_mm = component{4};
+        
+        % 将毫米转换为米
+        L_m = L_mm / 1000;
+        a_m = a_mm / 1000;
+        b_m = b_mm / 1000;
+        
+        % 计算截面积 A（单位：平方米）
+        A = a_m * b_m;
+        
+        % 从结构体中获取电阻率
+        rho = resistivities.(material);
+        
+        % 计算电阻（单位：欧姆）
+        resistances(i) = rho * (L_m / A);
+    end
+    
+    % 计算并联总电阻
+    totalResistance = 1 / sum(1 ./ resistances);
+    print()
+end
