@@ -9,6 +9,7 @@ classdef coilField<coilParam
         end
 
         function fluxPF = getPFflux(obj,pfName)
+            % attention   该函数计算的是单位电流 1kA 时产生的磁通
             number = regexp(pfName, '\d+', 'match');
             number=str2double(number{1});
             [pfX,pfZ]=obj.grid(pfName);
@@ -17,10 +18,11 @@ classdef coilField<coilParam
             N=obj.PFcoil.N(number+1);
             Flux_X=obj.fluxPosition.X;
             Flux_Z=obj.fluxPosition.Y;
-            filament=ones(numel(pfX),1)*N/(NX*NY);
+            filament=ones(numel(pfX),1)*N/(NX*NY)*1e3;
             fluxPF=MMutInductance(Flux_X,Flux_Z,pfX,pfZ,filament);
         end
         function [Bt,flag1,flag2]=getPFbt(obj,pfCoil,coilcurrent,xgridNum,ygridNum,isFig)
+            % attention   该函数计算的是单位电流 1kA 时产生的磁场
             if nargin<3  current=1;   end
             if nargin<4  xgridNum=9;   end
             if nargin<5  ygridNum=9;   end
@@ -49,8 +51,8 @@ classdef coilField<coilParam
                 [BX,BY]=MMagneticField(probe_x,probe_y,pfX,pfZ,FilamentCurrent);  %计算网格化的磁探针位置处的磁场大小，单位T
                 BX2=reshape(BX,[(xgridNum*ygridNum),numel(BX)/(xgridNum*ygridNum)]); %重新按照网格化参数进行磁场大小线性叠加
                 BY2=reshape(BY,[(xgridNum*ygridNum),numel(BY)/(xgridNum*ygridNum)]);
-                B_X=B_X+sum(BX2,1)/(xgridNum*ygridNum)*1e4;  % BX  unit Gauss  水平方向磁场
-                B_Y=B_Y+sum(BY2,1)/(xgridNum*ygridNum)*1e4;  % 垂直方向磁场
+                B_X=B_X+sum(BX2,1)/(xgridNum*ygridNum);  % BX  unit Gauss  水平方向磁场
+                B_Y=B_Y+sum(BY2,1)/(xgridNum*ygridNum);  % 垂直方向磁场
 
                 if isFig
                     obj.drawPF(number);
@@ -62,7 +64,7 @@ classdef coilField<coilParam
                 end
             end
             theta_bt=deg2rad(obj.mptGeometry.Angle);
-            Bt=B_X.*cos(theta_bt')+B_Y.*sin(theta_bt');  % PF contribution
+            Bt=-B_X.*cos(theta_bt')-B_Y.*sin(theta_bt');  % PF contribution
 
             if isFig
                 normB=sqrt(B_X.^2+B_Y.^2);
@@ -76,6 +78,7 @@ classdef coilField<coilParam
             end
         end
         function [Br,flag1,flag2]=getPFbr(obj,pfCoil,coilcurrent,xgridNum,ygridNum,isFig)
+            % attention   该函数计算的是单位电流 1kA 时产生的磁场
             if nargin<3  current=1;   end
             if nargin<4  xgridNum=9;   end
             if nargin<5  ygridNum=9;   end
@@ -104,8 +107,8 @@ classdef coilField<coilParam
                 [BX,BY]=MMagneticField(probe_x,probe_y,pfX,pfZ,FilamentCurrent);  %计算网格化的磁探针位置处的磁场大小，单位T
                 BX2=reshape(BX,[(xgridNum*ygridNum),numel(BX)/(xgridNum*ygridNum)]); %重新按照网格化参数进行磁场大小线性叠加
                 BY2=reshape(BY,[(xgridNum*ygridNum),numel(BY)/(xgridNum*ygridNum)]);
-                B_X=B_X+sum(BX2,1)/(xgridNum*ygridNum)*1e4;  % BX  unit Gauss  水平方向磁场
-                B_Y=B_Y+sum(BY2,1)/(xgridNum*ygridNum)*1e4;  % 垂直方向磁场
+                B_X=B_X+sum(BX2,1)/(xgridNum*ygridNum);  % BX  unit Gauss  水平方向磁场
+                B_Y=B_Y+sum(BY2,1)/(xgridNum*ygridNum);  % 垂直方向磁场
 
                 if isFig
                     obj.drawPF(number);

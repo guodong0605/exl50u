@@ -1,7 +1,8 @@
 function manysubplots(shotnum, timeRange,channelnames,plotLayout,isshift,dshiftTime,issave)
-timeRange_default='-2:4:1e-2';
+timeRange_default='-2:6:1e-2';
 % DataChns_default={'IP','LoopV','hcn_ne001','ecrh0_uk','gas_pres01','gas_out01','i_cs','zp,rp','IMP01,IMP02,IMP04','Ha001,HA002','axuv015','hxr004'};
-DataChns_default={'ip','LoopV','hcn_ne001','ecrh0_uk','gas_pres01','gas_out01','i_cs','zp,rp','i_tf','i_pf1,i_pf2','i_pf3,i_pf5','i_pf9,i_pf10','IMP01,IMP04,IMP06','Ha001,ha002','axuv015','hxr004'};
+% DataChns_default={'ip','LoopV','hcn_ne001','ecrh0_uk','gas_pres01','gas_out01','i_cs','zp,rp','i_tf','i_pf1,i_pf2','i_pf3,i_pf5','i_pf9,i_pf10','IMP01,IMP04,IMP06','Ha001,ha002','axuv015','hxr004'};
+DataChns_default={'i_cs','i_pf1,i_pf2','i_pf3,i_pf4','i_pf5,i_pf6','i_pf7,i_pf8','i_pf9,i_pf10'};
 
 plotLayout_default=ceil(length(DataChns_default)/4);
 dshift_default=0;

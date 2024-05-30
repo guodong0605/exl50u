@@ -86,6 +86,19 @@ if figflag
             else
                 unitflag=0;
             end
+            len_time = length(time);
+            len_temp = length(temp);
+            if len_time ~= len_temp
+                if len_time > len_temp
+                    % 补充temp
+                    temp = [temp, nan(1, len_time - len_temp)];
+                else
+                    % 补充time
+                    time = [time, nan(1, len_temp - len_time)];
+                end
+            end
+
+
             hold on; hg{i}=plot(time,temp','linewidth',plotlinewidth,'Color',colors(j,:));
             set(gca, 'FontWeight', 'normal', 'FontSize', titlefontsize, 'LineWidth', figure_line_width, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.01 0.01],'Xgrid','on','Ygrid','on','Box','on','GridLineStyle',':')
             set(gca, 'FontAngle',  'normal', 'FontName',   'Times New Roman', 'FontUnits',  'points','FontSize',  titlefontsize, 'FontWeight', 'bold');

@@ -128,7 +128,11 @@ initServerTree;
             y=mdsvalue(['\' CurrentChannel]);
             currentshotnum=mdsvalue('current_shot(''exl50u'')');
             infostring=mdsvalue(['\' CurrentChannel,'.info']);
-            infomation=extractInfo(infostring);
+            try
+                infomation=extractInfo(infostring);
+            catch
+                infomation='';
+            end
             try
                 datechn=['ad',CurrentChannel];
                 shotDate = mdsvalue(['DATE_TIME(getnci(\' datechn ',"TIME_INSERTED"))']);
@@ -156,40 +160,28 @@ initServerTree;
         infomation.shotDate=shotDate;
         infomation.currentshotNum=currentshotnum;
     end
-    function info=extractInfo(str)
-        % Example string
-        % str = "gain:1000,factor:10,offset:0.1,unit:G,desc:this diagnostic is used to measure the plasma edge magnetic field";
+  function info = extractInfo(jsonStr)
+    % Example JSON string
+    % jsonStr = '{"factor":-282.1, "unit": "g"}';
 
-        % Regular expression to extract key-value pairs
-        % Pattern Explanation:
-        % - (?<key>\w+): Matches and captures the key consisting of one or more word characters
-        % - : Matches the literal colon separator
-        % - (?<value>[^,]+): Matches and captures the value consisting of characters up to a comma
-        pattern = '(?<key>\w+):(?<value>[^,]+)';
-
-        % Apply the regular expression
-        tokens = regexp(str, pattern, 'names');
-
-        % Initialize a cell array of structures if you have multiple entries
-        info = {};
-
-        % Assuming tokens is not empty and contains the necessary fields
-        if ~isempty(tokens)
-            info = struct();
-            for d = 1:length(tokens)
-                key = tokens(d).key;
-                value = tokens(d).value;
-                % Convert numerical values from strings to numbers where appropriate
-                if any(isstrprop(value, 'digit'))  % Check if 'value' contains digits
-                    if contains(value, '.')
-                        info.(key) = str2double(value);  % Convert to double if it contains a decimal point
-                    else
-                        info.(key) = str2num(value);  % Convert to number (integer)
-                    end
-                else
-                    info.(key) = value;  % Store as string
-                end
+    % Parse the JSON string into a MATLAB structure
+    info = jsondecode(jsonStr);
+    
+    % Convert any numeric strings to numbers
+    fields = fieldnames(info);
+    for ii = 1:numel(fields)
+        key = fields{ii};
+        value = info.(key);
+        
+        % Check if the value is a string that represents a number
+        if ischar(value) && any(isstrprop(value, 'digit'))
+            if contains(value, '.')
+                info.(key) = str2double(value);  % Convert to double if it contains a decimal point
+            else
+                info.(key) = str2num(value);  % Convert to number (integer)
             end
         end
     end
+end
+
 end

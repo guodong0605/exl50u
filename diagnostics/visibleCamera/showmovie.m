@@ -1,10 +1,7 @@
-function showmovie(shotnum, t1, t2, name)
+function showmovie(shotnum,leftchn,rightchn,t1, t2)
 %  showmovie(3001,2,2.2,'test4')
-chn1='ip';
-chn2='ha009';
-ylabel1='IP(kA)';
-ylabel2='Ha(au)';
-
+leftchn='m60';
+rightchn='ip,hcn_ne001,axuv001,i_cs';
 
 dt = 0.5;
 dframe = 3;
@@ -24,30 +21,21 @@ if ~exist(folderPath, 'dir')
 
 end
 
-
-mp4filename = ['C:\Users\Administrator\Desktop\实验日志\', name, '.mp4'];
-
-[ip, tip] = downloaddata(shotnum, chn1,datatime, 0, 0);
-[ne, tne] = downloaddata(shotnum, chn2, datatime, 0, 0);
-% ne = smooth(ne, 300);
+mp4filename = ['C:\Users\Administrator\Desktop\实验日志\', shotnum, '.mp4'];
 
 v = VideoWriter(mp4filename, 'MPEG-4');
 v.FrameRate = 10;
 open(v);
 
 fig = figure(1);
-set(fig, 'position', [10, 10, 1100, 800]);
-ypos = {[0.17, 0.7425, 0.7, 0.1975], [0.17, 0.12, 0.7, 0.1975*3-0.02]};
-y1 = subplot('Position', ypos{1});
+set(fig, 'position',  [50, 50, 1600, 800]);
+subplot('Position', [0.05, 0.1, 0.5, 0.8]); % 左边subplot位置
 hold on;
-
+subplot('Position', [0.60, 0.1, 0.3, 0.8]); % 左边subplot位置
 % 绘制ip和ne的曲线
-[hax, hline1, hline2] = plotyy(tip, ip, tne, ne);
-set([hline1, hline2], 'LineWidth', 2.5);
-ylabel(hax(1), ylabel1, 'interpreter', 'tex');
-ylabel(hax(2), ylabel2, 'interpreter', 'tex');
-set(hax(1), 'FontWeight', 'bold', 'FontSize', 13, 'LineWidth', 1.2, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.02 0.02],'Xgrid','on','Ygrid','on','Box','on')
-set(hax(2), 'FontWeight', 'bold', 'FontSize', 13, 'LineWidth', 1.2, 'XMinorTick', 'on', 'YMinorTick', 'on','ticklength',[0.02 0.02],'Xgrid','on','Ygrid','on','Box','on')
+
+
+
 
 % 初始化参考线
 refLine = plot(hax(1), [tip(1), tip(1)], [min(ip)*0.8, max(ip)*1.1], '--r', 'LineWidth', 1.2);

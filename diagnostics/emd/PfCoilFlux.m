@@ -30,7 +30,7 @@ BY2=reshape(BY,[(probe_xgrid*probe_ygrid),numel(BY)/(probe_xgrid*probe_ygrid)]);
 B_X=sum(BX2,1)/(probe_xgrid*probe_ygrid)*1e4;
 B_Y=sum(BY2,1)/(probe_xgrid*probe_ygrid)*1e4;
 theta_bt=table2array(MBTParameter(:,4))/180*pi;
-Bt=B_X.*cos(theta_bt')+B_Y.*sin(theta_bt');  % PF contribution
+Bt=-B_X.*cos(theta_bt')-B_Y.*sin(theta_bt');  % PF contribution
 %-------------compute the B-r-------------------------------------------
 [BX,BY]=MMagneticField(br_x,br_y,X2,Y2,FilamentCurrent);
 BX2=reshape(BX,[(probe_xgrid*probe_ygrid),numel(BX)/(probe_xgrid*probe_ygrid)]);

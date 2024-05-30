@@ -1,0 +1,230 @@
+function readspedata()
+% 主函数 readspedata:
+% 调用子函数加载和处理数据。
+% 调用子函数绘制图像和光谱图。
+% 调用子函数分析光谱数据。
+% 调用子函数计算温度。
+% 调用子函数绘制时间演变图和径向分布图。
+% plotImage: 绘制指定帧的图像。
+% plotSpectrum: 绘制光谱图。
+% analyzeSpectra:分析光谱数据，通过高斯拟合提取参数。
+% fitGaussian:执行高斯拟合，返回拟合参数和置信区间。
+% calculateTemperature: 计算等离子体离子温度及其误差。
+% plotTimeEvolution: 绘制随时间演变的图像。
+% plotRadialDistribution:
+% 
+% 绘制径向分布图。
+    close all; clear all; clc; % 关闭所有图形窗口，清除工作区和命令行窗口
+    
+    shot = 4406;%定义shot编号
+    % 读取SPE文件并提取数据
+  sp = loadSPE('04406.spe');
+    data = sp.int; % 提取光谱数据
+    
+    [ax, bx, cx] = size(data); % 获取数据的尺寸
+    spedata = zeros(ax, bx, cx); % 初始化一个与数据尺寸相同的零矩阵
+    
+    for i = 1:cx
+        spedata(:, :, i) = data(:, :, i); % 将每一帧的数据复制到spedata矩阵中
+    end
+    
+    frame = 30; % 定义要显示的帧
+    plotImage(spedata, frame); % 调用函数绘制图像
+    plotSpectrum(sp, spedata, frame, shot); % 调用函数绘制光谱图
+    
+    BG = 600; % 定义背景值
+    global CIII % 定义全局变量CIII
+    global Range % 定义全局变量Range
+    amu = 10.9; % 定义原子质量数
+    x0 = [282.16296 282.45361 282.58298]; % 定义中心波长
+    [~, pixel0] = min(abs(sp.wavelength - x0(1))); % 找到与中心波长最接近的像素
+    Dis = 0.009; % 谱仪分辨率nm/pixel
+    FWHM = 0.0335; % 仪器展宽nm
+    doppw = FWHM / sqrt(4 * log(2)); % 计算仪器展宽的多普勒宽度
+    doppw = doppw / Dis; % 转换多普勒宽度为像素单位
+    Range=pixel0-30:pixel0+20;
+    Range1=pixel0-30:pixel0+25; % 定义另一个光谱范围
+    Ti0 = 1000/1000; % 定义初始温度（keV）
+    Dop = TikeV2Doppler(Ti0, amu, x0(1)) / Dis; % 计算多普勒宽度
+    Fra=1:cx;
+    % 分析光谱数据并提取参数
+    [varpos, varTi, width, amp, Intensity,varw1] = analyzeSpectra(spedata, cx, ax, BG, pixel0, doppw, Range1, Dis, amu, x0, Dop);
+    % 计算温度及其误差
+    [Ti, Tierr, Intensity]= calculateTemperature(width, varw1, doppw, Dis, amu, x0, Ti0, Intensity);
+    R = xlsread([cd, '\R.xlsx'], ['Sheet2']); % 读取径向分布数据
+    R = flip(R, 1); % 翻转数据
+    
+    plotTimeEvolution(cx, ax, Ti, Tierr, Intensity, R, shot); % 绘制时间演变图
+    plotRadialDistribution(R, Ti, Tierr, Intensity, Fra, shot); % 绘制径向分布图
+end
+
+function plotImage(spedata, frame)
+    figure(1); % 创建新图形窗口
+    image(spedata(:, :, frame), 'CDataMapping', 'scaled'); % 绘制指定帧的图像
+    colormap(lines); % 设置颜色映射
+    keyboard; % 暂停程序以便查看图像
+end
+
+function plotSpectrum(sp, spedata, frame, shot)
+    figure(20); % 创建新图形窗口
+    plot(sp.wavelength, spedata(10, :, frame), 'LineWidth', 2); % 绘制光谱图
+    xlabel('Wavelength(nm)', 'FontSize', 16, 'FontName', 'Times New Roman'); % 设置x轴标签
+    ylabel('BIV Intensity(cts)', 'FontSize', 16, 'FontName', 'Times New Roman'); % 设置y轴标签
+    title(['#', num2str(shot), ' BIV line @ 282nm']); % 设置标题
+    set(gca, 'FontSize', 16, 'FontName', 'Times New Roman'); % 设置坐标轴字体
+end
+
+function [varpos, varTi, width, amp, Intensity,varw1] = analyzeSpectra(spedata, cx, ax, BG, pixel0, doppw, Range1, Dis, amu, x0, Dop)
+    global CIII % 定义全局变量CIII
+    global Range % 定义全局变量Range
+    varpos = zeros(ax, cx); % 初始化变量位置矩阵
+    varTi = zeros(ax, cx); % 初始化变量温度矩阵
+    width = zeros(ax, cx); % 初始化宽度矩阵
+    amp = zeros(ax, cx); % 初始化振幅矩阵
+    Intensity = zeros(ax, cx); % 初始化强度矩阵
+    
+    for k = 1:cx
+        for i = 1:ax
+            spe = spedata(i, :, k); % 提取第k帧第i行的光谱数据
+            CIII = spe(Range); % 提取指定范围内的光谱数据
+            [~, index] = max(spe(pixel0 - 5:pixel0 + 5)); % 找到峰值位置
+            if max(spe) < BG + 50 % 判断峰值是否显著
+                varpos(i, k) = 0;
+                varTi(i, k) = 0;
+                width(i, k) = 0;
+                amp(i, k) = 0;
+                Intensity(i, k) = 0;
+            else
+                index = index + pixel0 - 5 - 1; % 计算峰值索引
+                [betab, ci] = fitGaussian(spe, index, doppw, BG, Dop); % 进行高斯拟合
+                varpos(i, k) = 0.5 * abs(ci(2, 2) - ci(2, 1)); % 计算位置误差
+                varw1(i, k) = ci(3, 2); % 计算宽度误差
+                width(i, k) = betab(3); % 获取拟合的宽度
+                amp(i, k) = betab(1); % 获取拟合的振幅
+                Intensity(i, k) = sqrt(pi) * betab(1) * TikeV2Doppler(betab(3), amu, x0(1)) / Dis; % 计算强度
+                yfit = gaussspectra(betab, Range1); % 计算拟合光谱
+                figure(2); plot(490:600, spe(490:600), 'o', Range1, yfit, 'LineWidth', 2); % 绘制拟合结果
+            end
+        end
+    end
+end
+
+function [betab, ci] = fitGaussian(spe, index, doppw, BG, Dop)
+    b0 = [max(spe), index, doppw, BG]; % 初始拟合参数
+    bl = [0, index - 5, doppw / 2, BG / 2]; % 下边界
+    bu = [max(spe), index + 5, Dop, BG * 1.5]; % 上边界
+    options = optimset('Display', 'off', 'FinDiffType', 'central', 'FinDiffRelStep', 1e-7); % 优化选项
+    [params, ~, residual, ~, ~, ~, jacobian] = lsqnonlin(@multifit, b0, bl, bu, options); % 非线性最小二乘拟合
+    betab = params; % 获取拟合参数
+    alpha = 0.05; % 置信水平
+    if ~isempty(jacobian)
+        ci = nlparci(betab, residual, jacobian, alpha); % 计算置信区间
+        if isnan(ci)
+            ci = [betab; betab]';
+        end
+    else
+        ci = [betab; betab]'; disp('The fit is too bad!!!!!!!'); % 如果拟合不好，返回拟合参数
+    end
+end
+function [Ti, Tierr, Intensity] = calculateTemperature(width, varw1, doppw, Dis, amu, x0, Ti0, Intensity)
+    Ti = zeros(size(width)); % 初始化温度矩阵
+    Tierr = zeros(size(width)); % 初始化温度误差矩阵
+    for k = 1:size(width, 2)
+        for i = 1:size(width, 1)
+            if width(i, k) == 0 || width(i, k) < doppw % 判断宽度是否有效
+                Ti(i, k) = 0;
+                Tierr(i, k) = 0;
+                Intensity(i, k) = 0;
+            else
+                width1 = sqrt(width(i, k)^2 - doppw^2); % 计算实际宽度
+                varw = sqrt(varw1(i, k)^2 - doppw^2); % 计算宽度误差
+                [TikeV] = Doppler2TikeV(width1 * Dis, amu, x0(1)); % 计算等离子体离子温度
+                [TikeVu] = Doppler2TikeV(varw * Dis, amu, x0(1)); % 计算温度误差
+                Ti(i, k) = TikeV * 1000; % 转换为eV
+                Tierr(i, k) = (TikeVu - TikeV) * 1000; % 转换为eV
+                if Ti(i, k) < 5 || Tierr(i, k) > Ti0 * 1000 % 判断温度是否有效
+                    Ti(i, k) = 0;
+                    Tierr(i, k) = 0;
+                    Intensity(i, k) = 0;
+                end
+            end
+        end
+    end
+end
+
+function plotTimeEvolution(cx, ax, Ti, Tierr, Intensity, R, shot)
+    channel = [9]; % 定义通道
+    Frame = 1:cx; % 定义帧范围
+    Rin = zeros(1, length(channel)); % 初始化Rin
+    for i = 1:length(channel)
+        [~, index] = min(abs(R(:, 3) - channel(i))); % 找到最接近的通道索引
+        Rin(i) = R(index, 1); % 获取Rin值
+        [~, xx] = find(Ti(channel(i), :) ~= 0); % 找到有效温度值的索引
+        figure(4);
+        plot(Frame(xx), Intensity(channel(i), xx), '-o', 'LineWidth', 2); hold on; % 绘制光谱强度随时间的变化
+        ylabel('BVI Intensity(cts)', 'FontSize', 16, 'FontName', 'Times New Roman');
+        xlabel('Frame', 'FontSize', 16, 'FontName', 'Times New Roman');
+        legend;
+        figure(3);
+        errorbar(Frame(xx), Ti(channel(i), xx), Tierr(channel(i), xx), '-o', 'LineWidth', 2); hold on; % 绘制温度随时间的变化
+    end
+    unit = 'mm'; % 定义单位
+    name = 'R'; % 定义名称
+    legend_str = legend_upgrs(Rin, unit, name); % 创建图例字符串
+    legend(legend_str); % 显示图例
+    xlabel('Frame', 'FontSize', 16, 'FontName', 'Times New Roman');
+    ylabel('Ti(eV)', 'FontSize', 16, 'FontName', 'Times New Roman');
+    title(['#', num2str(shot), ' BIV line @ 282nm']); % 设置标题
+    set(gca, 'FontSize', 16, 'FontName', 'Times New Roman');
+end
+
+function plotRadialDistribution(R, Ti, Tierr, Intensity, Fra, shot)
+    for i = 1:length(Fra)
+        [~, xx] = find(Ti(:, Fra(i)) ~= 0); % 找到有效温度值的索引
+        figure(7);
+        plot(R(1:15, 1), Intensity(1:15, Fra(i)), '-o', 'LineWidth', 2); hold on; % 绘制光谱强度的径向分布
+        ylabel('BVI Intensity(cts)', 'FontSize', 16, 'FontName', 'Times New Roman');
+        xlabel('R(mm)', 'FontSize', 16, 'FontName', 'Times New Roman');
+        figure(5);
+        plot(R(xx, 1), Intensity(xx, Fra(i)), '-o', 'LineWidth', 2); hold on; % 绘制光谱强度的径向分布
+        ylabel('BVI Intensity(cts)', 'FontSize', 16, 'FontName', 'Times New Roman');
+        xlabel('R(mm)', 'FontSize', 16, 'FontName', 'Times New Roman');
+        legend;
+        figure(6);
+        errorbar(R(xx, 1), Ti(xx, Fra(i)), Tierr(xx, Fra(i)), '-o', 'LineWidth', 2); hold on; % 绘制温度的径向分布
+    end
+    unit = ''; % 定义单位为空
+    name = 'Frame'; % 定义名称
+    legend_str = legend_upgrs(Fra, unit, name); % 创建图例字符串
+    legend(legend_str); % 显示图例
+    xlabel('R(mm)', 'FontSize', 16, 'FontName', 'Times New Roman');
+    ylabel('Ti(eV)', 'FontSize', 16, 'FontName', 'Times New Roman');
+    title(['#', num2str(shot), ' BIV line @ 282nm']); % 设置标题
+    set(gca, 'FontSize', 16, 'FontName', 'Times New Roman');
+end
+
+function [lambda_Doppler] = TikeV2Doppler(Ti, amu, x0)
+    % TikeV2Doppler - 计算等效的多普勒宽度
+    %
+    % TikeV2Doppler 根据给定的中心波长和原子质量单位，假设高斯光谱形状，
+    % 计算等效的多普勒宽度。
+    % 
+    % 注意：多普勒宽度与全宽半最大值（FWHM）不同。
+    %       另请参见反函数 Doppler2TikeV，该函数返回给定多普勒宽度的等效离子温度。
+    %       
+    % 语法:  [lambda_Doppler] = TikeV2Doppler(Ti,amu,x0);
+    %
+    % 输入参数:
+    %    ti   : 局部离子温度（keV）
+    %    amu  : 原子质量单位
+    %    x0   : CX光谱的中心波长（例如 A）
+    %
+    % 输出参数:
+    %    lambda_Doppler : 与中心波长单位相同的多普勒宽度  
+    
+    % 包含各种物理常数
+    PROTON_MASS = 1.672621637e-27; % 质子质量
+    SPEED_OF_LIGHT = 2.99792458e8; % 光速
+    KEV = 1.602176487e-16; % keV 转换因子
+    lambda_Doppler = x0 * sqrt(2 * Ti * KEV / amu / PROTON_MASS) / SPEED_OF_LIGHT; % 计算多普勒宽度
+end

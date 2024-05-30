@@ -379,7 +379,7 @@ t2=1.3;
 Row = 23;
 startCol = 'B'; % F列
 rowname=[startCol,num2str(Row)];
-[mpt_ratio,mpn_ratio,flux_ratio]=coilcalibration(shotnum,t1,t2,'i_pf9');
+[mpt_ratio,mpn_ratio,flux_ratio]=coilcalibration(shotnum,t1,t2,'i_pf8');
 xlswrite(excelFilePath,flux_ratio, 'flux_coil', rowname); % 写入标题
 xlswrite(excelFilePath,mpt_ratio, 'mpt_coil', rowname); % 写入标题
 xlswrite(excelFilePath,mpn_ratio, 'mpn_coil', rowname); % 写入标题
